@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { env } from "../config/env.js";
+import { unauthorized } from "../../../../shared/utils/errors.js";
 
 const accessSecret = env.JWT_SECRET ?? "default_jwt_secret";
 const refreshSecret = env.JWT_REFRESH_SECRET ?? "default_refresh_secret";
@@ -16,7 +17,7 @@ export const signAccessToken = (payload) =>
 
 export const verifyAccessToken = (token) => {
     if (isTokenRevoked(token)) {
-        throw new Error("Token revoked");
+        throw unauthorized("Token revoked");
     }
     return jwt.verify(token, accessSecret);
 };

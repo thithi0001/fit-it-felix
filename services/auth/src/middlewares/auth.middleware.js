@@ -4,9 +4,14 @@ import { verifyAccessToken } from "../utils/jwt.js";
 import { AuthRepository } from "../repositories/auth.repository.js";
 
 const parseSchema = (schema, data) => {
-    const result = schema.safeParse(data);
+    const input = data ?? {};
+    const result = schema.safeParse(input);
     if (!result.success) {
-        const errors = result.error.errors.map((issue) => ({ field: issue.path.join("."), message: issue.message }));
+        const issues = result.error?.issues ?? result.error?.errors ?? [];
+        const errors = issues.map((issue) => ({
+            field: issue.path?.join(".") ?? "body",
+            message: issue.message,
+        }));
         throw badRequest("Validation failed", errors);
     }
     return result.data;
