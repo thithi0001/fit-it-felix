@@ -4,11 +4,12 @@
 
 CREATE EXTENSION IF NOT EXISTS citext;
 
+
 -- =========================================================
 -- Enums
 -- =========================================================
 
-CREATE TYPE user_status AS ENUM (
+CREATE TYPE account_status AS ENUM (
     'active',
     'locked'
 );
@@ -18,6 +19,7 @@ CREATE TYPE approval_action AS ENUM (
     'rejected',
     'cancelled'
 );
+
 
 -- =========================================================
 -- Roles
@@ -34,28 +36,6 @@ CREATE TABLE roles (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- =========================================================
--- Users
--- =========================================================
-
-CREATE TABLE users (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-
-    role_id BIGINT NOT NULL,
-
-    username CITEXT NOT NULL UNIQUE,
-    email CITEXT NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,
-
-    status user_status NOT NULL DEFAULT 'active',
-
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-
-    CONSTRAINT fk_users_role
-        FOREIGN KEY (role_id)
-        REFERENCES roles(id)
-);
 
 -- =========================================================
 -- Departments
@@ -73,6 +53,7 @@ CREATE TABLE departments (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+
 -- =========================================================
 -- Employees
 -- =========================================================
@@ -80,11 +61,7 @@ CREATE TABLE departments (
 CREATE TABLE employees (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 
-    user_id BIGINT UNIQUE,
-
     department_id BIGINT,
-
-    manager_employee_id BIGINT,
 
     employee_code VARCHAR(30) UNIQUE NOT NULL,
 
@@ -103,21 +80,42 @@ CREATE TABLE employees (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
-    CONSTRAINT fk_employee_user
-        FOREIGN KEY (user_id)
-        REFERENCES users(id)
-        ON DELETE SET NULL,
-
-    CONSTRAINT fk_employee_department
+    CONSTRAINT fk_employees_department
         FOREIGN KEY (department_id)
         REFERENCES departments(id)
-        ON DELETE SET NULL,
-
-    CONSTRAINT fk_employee_manager
-        FOREIGN KEY (manager_employee_id)
-        REFERENCES employees(id)
         ON DELETE SET NULL
 );
+
+
+-- =========================================================
+-- Accounts
+-- =========================================================
+
+CREATE TABLE accounts (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+
+    employee_id BIGINT NOT NULL UNIQUE,
+
+    role_id BIGINT NOT NULL,
+
+    username CITEXT NOT NULL UNIQUE,
+    email CITEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+
+    status account_status NOT NULL DEFAULT 'active',
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT fk_accounts_employee
+        FOREIGN KEY (employee_id)
+        REFERENCES employees(id),
+
+    CONSTRAINT fk_accounts_role
+        FOREIGN KEY (role_id)
+        REFERENCES roles(id)
+);
+
 
 -- =========================================================
 -- Approvals
@@ -130,7 +128,7 @@ CREATE TABLE approvals (
 
     record_id BIGINT NOT NULL,
 
-    approved_by_user_id BIGINT NOT NULL,
+    approved_by_account_id BIGINT NOT NULL,
 
     action approval_action NOT NULL,
 
@@ -138,26 +136,66 @@ CREATE TABLE approvals (
 
     acted_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
-    CONSTRAINT fk_approval_user
-        FOREIGN KEY (approved_by_user_id)
-        REFERENCES users(id)
+    CONSTRAINT fk_approvals_account
+        FOREIGN KEY (approved_by_account_id)
+        REFERENCES accounts(id)
 );
+
 
 -- =========================================================
 -- Indexes
 -- =========================================================
 
-CREATE INDEX idx_users_role
-ON users(role_id);
+CREATE INDEX idx_accounts_role
+ON accounts(role_id);
+
+CREATE INDEX idx_accounts_employee
+ON accounts(employee_id);
 
 CREATE INDEX idx_employees_department
 ON employees(department_id);
 
-CREATE INDEX idx_employees_manager
-ON employees(manager_employee_id);
-
 CREATE INDEX idx_approvals_record
 ON approvals(table_name, record_id);
 
-CREATE INDEX idx_approvals_user
-ON approvals(approved_by_user_id);
+CREATE INDEX idx_approvals_account
+ON approvals(approved_by_account_id);
+
+
+-- =========================================================
+-- Automatic updated_at
+-- =========================================================
+
+CREATE OR REPLACE FUNCTION update_updated_at()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$;
+
+
+CREATE TRIGGER trg_roles_updated_at
+BEFORE UPDATE ON roles
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at();
+
+
+CREATE TRIGGER trg_departments_updated_at
+BEFORE UPDATE ON departments
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at();
+
+
+CREATE TRIGGER trg_employees_updated_at
+BEFORE UPDATE ON employees
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at();
+
+
+CREATE TRIGGER trg_accounts_updated_at
+BEFORE UPDATE ON accounts
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at();

@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
@@ -8,17 +9,17 @@ datasource db {
 }
 
 model approvals {
-  id                  BigInt          @id @default(autoincrement())
-  table_name          String          @db.VarChar(100)
-  record_id           BigInt
-  approved_by_user_id BigInt
-  action              approval_action
-  note                String?
-  acted_at            DateTime        @default(now()) @db.Timestamptz(6)
-  users               users           @relation(fields: [approved_by_user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_approval_user")
+  id                     BigInt          @id @default(autoincrement())
+  table_name             String          @db.VarChar(100)
+  record_id              BigInt
+  approved_by_account_id BigInt
+  action                 approval_action
+  note                   String?
+  acted_at               DateTime        @default(now()) @db.Timestamptz(6)
+  accounts               accounts        @relation(fields: [approved_by_account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_approvals_account")
 
   @@index([table_name, record_id], map: "idx_approvals_record")
-  @@index([approved_by_user_id], map: "idx_approvals_user")
+  @@index([approved_by_account_id], map: "idx_approvals_account")
 }
 
 model departments {
@@ -32,52 +33,49 @@ model departments {
 }
 
 model employees {
-  id                  BigInt       @id @default(autoincrement())
-  user_id             BigInt?      @unique
-  department_id       BigInt?
-  manager_employee_id BigInt?
-  employee_code       String       @unique @db.VarChar(30)
-  full_name           String       @db.VarChar(150)
-  position            String?      @db.VarChar(100)
-  phone               String?      @db.VarChar(20)
-  date_of_birth       DateTime?    @db.Date
-  hire_date           DateTime?    @db.Date
-  termination_date    DateTime?    @db.Date
-  created_at          DateTime     @default(now()) @db.Timestamptz(6)
-  updated_at          DateTime     @default(now()) @db.Timestamptz(6)
-  departments         departments? @relation(fields: [department_id], references: [id], onUpdate: NoAction, map: "fk_employee_department")
-  employees           employees?   @relation("employeesToemployees", fields: [manager_employee_id], references: [id], onUpdate: NoAction, map: "fk_employee_manager")
-  other_employees     employees[]  @relation("employeesToemployees")
-  users               users?       @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "fk_employee_user")
+  id               BigInt       @id @default(autoincrement())
+  department_id    BigInt?
+  employee_code    String       @unique @db.VarChar(30)
+  full_name        String       @db.VarChar(150)
+  position         String?      @db.VarChar(100)
+  phone            String?      @db.VarChar(20)
+  date_of_birth    DateTime?    @db.Date
+  hire_date        DateTime?    @db.Date
+  termination_date DateTime?    @db.Date
+  created_at       DateTime     @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime     @default(now()) @db.Timestamptz(6)
+  accounts         accounts?
+  departments      departments? @relation(fields: [department_id], references: [id], onUpdate: NoAction, map: "fk_employee_department")
 
   @@index([department_id], map: "idx_employees_department")
-  @@index([manager_employee_id], map: "idx_employees_manager")
-}
-
-model users {
-  id            BigInt      @id @default(autoincrement())
-  role_id       BigInt
-  username      String      @unique @db.Citext
-  email         String      @unique @db.Citext
-  password_hash String
-  status        user_status @default(active)
-  created_at    DateTime    @default(now()) @db.Timestamptz(6)
-  updated_at    DateTime    @default(now()) @db.Timestamptz(6)
-  approvals     approvals[]
-  employees     employees?
-  roles         roles       @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_users_role")
-
-  @@index([role_id], map: "idx_users_role")
 }
 
 model roles {
-  id          BigInt   @id @default(autoincrement())
-  code        String   @unique @db.VarChar(50)
-  name        String   @db.VarChar(100)
+  id          BigInt     @id @default(autoincrement())
+  code        String     @unique @db.VarChar(50)
+  name        String     @db.VarChar(100)
   description String?
-  created_at  DateTime @default(now()) @db.Timestamptz(6)
-  updated_at  DateTime @default(now()) @db.Timestamptz(6)
-  users       users[]
+  created_at  DateTime   @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime   @default(now()) @db.Timestamptz(6)
+  accounts    accounts[]
+}
+
+model accounts {
+  id            BigInt         @id @default(autoincrement())
+  employee_id   BigInt         @unique
+  role_id       BigInt
+  username      String         @unique @db.Citext
+  email         String         @unique @db.Citext
+  password_hash String
+  status        account_status @default(active)
+  created_at    DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime       @default(now()) @db.Timestamptz(6)
+  employees     employees      @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_accounts_employee")
+  roles         roles          @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_accounts_role")
+  approvals     approvals[]
+
+  @@index([employee_id], map: "idx_accounts_employee")
+  @@index([role_id], map: "idx_accounts_role")
 }
 
 enum approval_action {
@@ -86,7 +84,7 @@ enum approval_action {
   cancelled
 }
 
-enum user_status {
+enum account_status {
   active
   locked
 }

@@ -1,3 +1,25 @@
+const normalizeJsonValue = (value) => {
+    if (typeof value === "bigint") {
+        return value.toString();
+    }
+
+    if (Array.isArray(value)) {
+        return value.map((item) => normalizeJsonValue(item));
+    }
+
+    if (value && typeof value === "object") {
+        if (value instanceof Date) {
+            return value.toISOString();
+        }
+
+        return Object.fromEntries(
+            Object.entries(value).map(([key, entryValue]) => [key, normalizeJsonValue(entryValue)])
+        );
+    }
+
+    return value;
+};
+
 const buildResponse = ({ success, message, data = null, meta = null, errors = null }) => {
     const response = {
         success,
@@ -5,15 +27,15 @@ const buildResponse = ({ success, message, data = null, meta = null, errors = nu
     };
 
     if (data !== null) {
-        response.data = data;
+        response.data = normalizeJsonValue(data);
     }
 
     if (meta !== null) {
-        response.meta = meta;
+        response.meta = normalizeJsonValue(meta);
     }
 
     if (errors !== null) {
-        response.errors = errors;
+        response.errors = normalizeJsonValue(errors);
     }
 
     return response;

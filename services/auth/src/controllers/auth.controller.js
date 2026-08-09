@@ -13,12 +13,27 @@ export const AuthController = {
         }
     },
 
-    register: async (req, res, next) => {
+    refresh: async (req, res, next) => {
         try {
-            const result = await AuthService.register(req.body);
-            return res.status(201).json(successResponse({ data: result, message: "Registration successful" }));
+            const { refreshToken } = req.body;
+            const result = await AuthService.refreshToken(refreshToken);
+            return res.json(successResponse({ data: result, message: "Token refreshed" }));
         } catch (error) {
             return next(error);
         }
+    },
+
+    logout: async (req, res, next) => {
+        try {
+            const token = req.headers.authorization?.replace("Bearer ", "") || req.body.token;
+            const result = await AuthService.logout(token);
+            return res.json(successResponse({ data: result, message: "Logged out successfully" }));
+        } catch (error) {
+            return next(error);
+        }
+    },
+
+    me: async (req, res) => {
+        return res.json(successResponse({ data: req.user, message: "User info" }));
     },
 };

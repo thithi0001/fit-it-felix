@@ -1,22 +1,33 @@
+import prisma from "../config/prisma.js";
 import bcrypt from "bcryptjs";
-import { randomUUID } from "crypto";
-
-const users = [];
 
 export const AuthRepository = {
-    findByEmail: async (email) => users.find((user) => user.email === email),
+    findByUsername: async (username) =>
+        prisma.accounts.findUnique({
+            where: { username },
+            include: {
+                roles: true,
+                employees: {
+                    include: {
+                        departments: true,
+                    },
+                },
+            },
+        }),
 
-    createUser: async ({ name, email, password }) => {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = {
-            id: randomUUID(),
-            name,
-            email,
-            password: hashedPassword,
-        };
-        users.push(user);
-        return user;
-    },
+    findById: async (id) =>
+        prisma.accounts.findUnique({
+            where: { id },
+            include: {
+                roles: true,
+                employees: {
+                    include: {
+                        departments: true,
+                    },
+                },
+            },
+        }),
 
-    comparePassword: async (password, hashedPassword) => bcrypt.compare(password, hashedPassword),
+    comparePassword: async (password, passwordHash) =>
+        bcrypt.compare(password, passwordHash),
 };

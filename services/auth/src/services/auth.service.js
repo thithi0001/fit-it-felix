@@ -1,37 +1,87 @@
 import { AuthRepository } from "../repositories/auth.repository.js";
-import { signAccessToken } from "../utils/jwt.js";
-import { conflict, unauthorized } from "../../../../shared/utils/errors.js";
+import { blacklistToken, signAccessToken, signRefreshToken, verifyRefreshToken } from "../utils/jwt.js";
+import { badRequest, unauthorized } from "../../../../shared/utils/errors.js";
+
+const buildUserPayload = (account) => {
+    const employee = account.employees ?? null;
+    const department = employee?.departments ?? null;
+
+    return {
+        id: String(account.id),
+        employee_id: String(account.employee_id),
+        username: account.username,
+        email: account.email,
+        status: account.status,
+        role: account.roles?.code ?? null,
+        employee: employee
+            ? {
+                  employee_code: employee.employee_code,
+                  full_name: employee.full_name,
+                  position: employee.position,
+                  department: department?.name ?? null,
+              }
+            : null,
+    };
+};
 
 export const AuthService = {
-    login: async ({ email, password }) => {
-        const user = await AuthRepository.findByEmail(email);
-        if (!user) {
-            throw unauthorized("Invalid email or password");
+    login: async ({ username, password }) => {
+        const account = await AuthRepository.findByUsername(username);
+        if (!account) {
+            throw unauthorized("Invalid username or password");
         }
 
-        const isMatch = await AuthRepository.comparePassword(password, user.password);
+        const isMatch = await AuthRepository.comparePassword(password, account.password_hash);
         if (!isMatch) {
-            throw unauthorized("Invalid email or password");
+            throw unauthorized("Invalid username or password");
         }
 
-        const token = signAccessToken({ sub: user.id, email: user.email });
+        const accessToken = signAccessToken({
+            sub: String(account.id),
+            username: account.username,
+            email: account.email,
+            role: account.roles?.code,
+        });
+
+        const refreshToken = signRefreshToken({
+            sub: String(account.id),
+            username: account.username,
+        });
+
         return {
-            user: { id: user.id, name: user.name, email: user.email },
-            accessToken: token,
+            user: buildUserPayload(account),
+            accessToken,
+            refreshToken,
         };
     },
 
-    register: async ({ name, email, password }) => {
-        const existing = await AuthRepository.findByEmail(email);
-        if (existing) {
-            throw conflict("Email is already registered");
+    refreshToken: async (token) => {
+        try {
+            const payload = verifyRefreshToken(token);
+            const account = await AuthRepository.findById(Number(payload.sub));
+            if (!account) {
+                throw unauthorized("Invalid refresh token");
+            }
+
+            const accessToken = signAccessToken({
+                sub: String(account.id),
+                username: account.username,
+                email: account.email,
+                role: account.roles?.code,
+            });
+
+            return { accessToken };
+        } catch (error) {
+            throw badRequest("Invalid or expired refresh token");
+        }
+    },
+
+    logout: async (token) => {
+        if (!token) {
+            throw badRequest("Token is required");
         }
 
-        const user = await AuthRepository.createUser({ name, email, password });
-        const token = signAccessToken({ sub: user.id, email: user.email });
-        return {
-            user: { id: user.id, name: user.name, email: user.email },
-            accessToken: token,
-        };
+        blacklistToken(token);
+        return { success: true, message: "Logged out successfully" };
     },
 };

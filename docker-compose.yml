@@ -6,32 +6,75 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
 
   auth:
     build:
       context: .
-      dockerfile: Dockerfile
-      args:
-        SERVICE_PATH: services/auth
+      dockerfile: services/auth/Dockerfile
     container_name: auth
     restart: unless-stopped
     ports:
       - "3001:3001"
+    volumes:
+      - ./.env:/usr/src/app/.env:ro
+      - ./services/auth/.env:/usr/src/app/services/auth/.env:ro
+      - ./shared:/usr/src/app/shared
+      - ./services/auth:/usr/src/app/services/auth
+      - /usr/src/app/services/auth/node_modules
+      - /usr/src/app/services/auth/prisma/.prisma
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./.env
+      - ./services/auth/.env
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      GATEWAY_PORT: ${GATEWAY_PORT:-3000}
+      AUTH_PORT: ${AUTH_PORT:-3001}
+      RABBITMQ_URL: ${RABBITMQ_URL:-amqp://guest:guest@rabbitmq:5672}
+      JWT_SECRET: ${JWT_SECRET:-tttn_c18_2026}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-tttn_c18_2026_refresh}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
 
   gateway:
     build:
       context: .
-      dockerfile: Dockerfile
-      args:
-        SERVICE_PATH: gateway
+      dockerfile: gateway/Dockerfile
     container_name: gateway
     restart: unless-stopped
     ports:
       - "3000:3000"
+    volumes:
+      - ./.env:/usr/src/app/.env:ro
+      - ./gateway/.env:/usr/src/app/gateway/.env:ro
+      - ./shared:/usr/src/app/shared
+      - ./gateway:/usr/src/app/gateway
     depends_on:
-      - auth
-      - rabbitmq
+      auth:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./.env
+      - ./gateway/.env
     environment:
-      - AUTH_SERVICE_URL=http://auth:3001
+      NODE_ENV: ${NODE_ENV:-development}
+      GATEWAY_PORT: ${GATEWAY_PORT:-3000}
+      AUTH_SERVICE_URL: ${AUTH_SERVICE_URL:-http://auth:3001}
+      JWT_SECRET: ${JWT_SECRET:-tttn_c18_2026}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-tttn_c18_2026_refresh}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+
+  shared:
+    build:
+      context: .
+      dockerfile: shared/Dockerfile
+    container_name: shared
+    restart: no
+    profiles: ["tooling"]
