@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { env } from "../config/index.js";
 import { forbidden, unauthorized } from "../utils/errors.js";
+import { isTokenRevoked } from "../utils/tokenBlacklist.js";
 
 export const authenticate = (getUserFromToken = null) => async (req, res, next) => {
     try {
@@ -10,6 +11,10 @@ export const authenticate = (getUserFromToken = null) => async (req, res, next) 
         }
 
         const token = authHeader.split(" ")[1];
+        if (isTokenRevoked(token)) {
+            throw unauthorized("Token revoked");
+        }
+
         const payload = jwt.verify(token, env.JWT_SECRET);
 
         let user = payload;

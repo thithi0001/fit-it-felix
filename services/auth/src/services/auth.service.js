@@ -76,12 +76,15 @@ export const AuthService = {
         }
     },
 
-    logout: async (token) => {
+    logout: async (token, refreshToken) => {
         if (!token) {
             throw badRequest("Token is required");
         }
 
         blacklistToken(token);
+        if (refreshToken) {
+            blacklistToken(refreshToken);
+        }
         return { success: true, message: "Logged out successfully" };
     },
 };
