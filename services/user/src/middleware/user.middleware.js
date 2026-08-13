@@ -1,6 +1,24 @@
-import { forbidden, unauthorized } from "../../../../shared/utils/errors.js";
+import { badRequest, forbidden, unauthorized } from "../../../../shared/utils/errors.js";
 import { authenticate as sharedAuthenticate, authorize as sharedAuthorize } from "../../../../shared/middlewares/auth.middleware.js";
 import { UserRepository } from "../repositories/user.repository.js";
+import { updateEmployeeSchema } from "../validations/user.validation.js";
+
+const parseSchema = (schema, data) => {
+    const input = data ?? {};
+    const result = schema.safeParse(input);
+
+    if (!result.success) {
+        const issues = result.error?.issues ?? result.error?.errors ?? [];
+        const errors = issues.map((issue) => ({
+            field: issue.path?.join(".") ?? "body",
+            message: issue.message,
+        }));
+
+        throw badRequest("Validation failed", errors);
+    }
+
+    return result.data;
+};
 
 export const authenticate = (req, res, next) =>
     sharedAuthenticate(async (payload) => {
@@ -18,6 +36,15 @@ export const authenticate = (req, res, next) =>
     })(req, res, next);
 
 export const authorize = (...allowedRoles) => sharedAuthorize(...allowedRoles);
+
+export const validateUpdateEmployee = (req, res, next) => {
+    try {
+        req.body = parseSchema(updateEmployeeSchema, req.body);
+        next();
+    } catch (error) {
+        next(error);
+    }
+};
 
 export const requireEmployeeOwnership = (paramName = "id") => (req, res, next) => {
     try {

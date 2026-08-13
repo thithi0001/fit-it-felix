@@ -55,19 +55,19 @@ CREATE TABLE departments (
 CREATE TABLE employees (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 
-    department_id BIGINT,
+    department_id BIGINT NOT NULL,
 
     employee_code VARCHAR(30) UNIQUE NOT NULL,
 
     full_name VARCHAR(150) NOT NULL,
 
-    position VARCHAR(100),
+    position VARCHAR(100) NOT NULL,
 
-    phone VARCHAR(20),
+    phone VARCHAR(20) NOT NULL,
 
-    date_of_birth DATE,
+    date_of_birth DATE NOT NULL,
 
-    hire_date DATE,
+    hire_date DATE NOT NULL,
 
     termination_date DATE,
 

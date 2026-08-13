@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { UserController } from "../controllers/user.controller.js";
-import { authenticate, authorize, requireEmployeeOwnership } from "../middleware/user.middleware.js";
+import { authenticate, authorize, requireEmployeeOwnership, validateUpdateEmployee } from "../middleware/user.middleware.js";
 
 const router = Router();
 
@@ -20,6 +20,7 @@ router.put(
     "/employees/:id",
     authenticate,
     authorize("ADMIN", "USER"),
+    validateUpdateEmployee,
     requireEmployeeOwnership("id"),
     UserController.updateEmployee,
 );

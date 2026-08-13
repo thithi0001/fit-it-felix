@@ -158,18 +158,26 @@ export const UserRepository = {
             termination_date,
         } = payload;
 
+        const updateData = {};
+
+        if (full_name !== undefined) updateData.full_name = full_name;
+        if (employee_code !== undefined) updateData.employee_code = employee_code;
+        if (department_id !== undefined) updateData.department_id = toBigInt(department_id);
+        if (position !== undefined) updateData.position = position;
+        if (phone !== undefined) updateData.phone = phone;
+        if (date_of_birth !== undefined) updateData.date_of_birth = parseDateInput(date_of_birth);
+        if (hire_date !== undefined) updateData.hire_date = parseDateInput(hire_date);
+        if (termination_date !== undefined) {
+            updateData.termination_date = termination_date === null ? null : parseDateInput(termination_date);
+        }
+
+        if (Object.keys(updateData).length === 0) {
+            throw new Error("No update fields provided");
+        }
+
         return prisma.employees.update({
             where: { id: toBigInt(id) },
-            data: {
-                department_id: department_id ? toBigInt(department_id) : null,
-                employee_code,
-                full_name,
-                position: position ?? null,
-                phone: phone ?? null,
-                date_of_birth: parseDateInput(date_of_birth),
-                hire_date: parseDateInput(hire_date),
-                termination_date: parseDateInput(termination_date),
-            },
+            data: updateData,
         });
     },
 };
