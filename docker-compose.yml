@@ -58,6 +58,8 @@ services:
     depends_on:
       auth:
         condition: service_started
+      user:
+        condition: service_started
       rabbitmq:
         condition: service_healthy
     env_file:
@@ -67,6 +69,36 @@ services:
       NODE_ENV: ${NODE_ENV:-development}
       GATEWAY_PORT: ${GATEWAY_PORT:-3000}
       AUTH_SERVICE_URL: ${AUTH_SERVICE_URL:-http://auth:3001}
+      USER_SERVICE_URL: ${USER_SERVICE_URL:-http://user:3002}
+      JWT_SECRET: ${JWT_SECRET:-tttn_c18_2026}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-tttn_c18_2026_refresh}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+
+  user:
+    build:
+      context: .
+      dockerfile: services/user/Dockerfile
+    container_name: user
+    restart: unless-stopped
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./.env:/usr/src/app/.env:ro
+      - ./services/user/.env:/usr/src/app/services/user/.env:ro
+      - ./shared:/usr/src/app/shared
+      - ./services/user:/usr/src/app/services/user
+      - /usr/src/app/services/user/node_modules
+      - /usr/src/app/services/user/prisma/.prisma
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./.env
+      - ./services/user/.env
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      USER_PORT: ${USER_PORT:-3002}
+      RABBITMQ_URL: ${RABBITMQ_URL:-amqp://guest:guest@rabbitmq:5672}
       JWT_SECRET: ${JWT_SECRET:-tttn_c18_2026}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-tttn_c18_2026_refresh}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}

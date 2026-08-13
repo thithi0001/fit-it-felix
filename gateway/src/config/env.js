@@ -9,12 +9,14 @@ const loadEnv = {
   ...rootEnv,
   PORT: Number(process.env.PORT ?? rootEnv.GATEWAY_PORT ?? 3000),
   AUTH_SERVICE_URL: process.env.AUTH_SERVICE_URL ?? "http://localhost:3001",
+  USER_SERVICE_URL: process.env.USER_SERVICE_URL ?? "http://localhost:3002",
   TEST: process.env.TEST ?? "cannot load env",
 };
 
 if (loadEnv.NODE_ENV) {
   console.log("[gateway-env] TEST:", loadEnv.TEST);
   console.log("[gateway-env] AUTH_SERVICE_URL:", loadEnv.AUTH_SERVICE_URL);
+  console.log("[gateway-env] USER_SERVICE_URL:", loadEnv.USER_SERVICE_URL);
 }
 
 export const env = loadEnv;
