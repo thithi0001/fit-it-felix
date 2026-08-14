@@ -8,7 +8,7 @@ dotenv.config({ path: serviceEnvPath });
 const loadEnv = {
   ...rootEnv,
   PORT: Number(process.env.PORT ?? rootEnv.USER_PORT ?? 3002),
-  TEST: process.env.TEST ?? "user_loaded_env",
+  TEST: process.env.TEST ?? "cannot load env",
   DATABASE_URL: process.env.DATABASE_URL ?? "",
 };
 

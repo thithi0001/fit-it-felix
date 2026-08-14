@@ -55,6 +55,7 @@ export const AuthService = {
             type: EVENTS.USER_LOGIN,
             data: {
                 id: String(account.id),
+                employee_id: String(account.employee_id),
                 username: account.username,
                 email: account.email,
                 role: account.roles?.code ?? null,
