@@ -25,6 +25,7 @@ services:
       - ./services/auth/.env:/usr/src/app/services/auth/.env:ro
       - ./shared:/usr/src/app/shared
       - ./services/auth:/usr/src/app/services/auth
+      - /usr/src/app/shared/node_modules
       - /usr/src/app/services/auth/node_modules
       - /usr/src/app/services/auth/prisma/.prisma
     depends_on:
@@ -55,6 +56,8 @@ services:
       - ./gateway/.env:/usr/src/app/gateway/.env:ro
       - ./shared:/usr/src/app/shared
       - ./gateway:/usr/src/app/gateway
+      - /usr/src/app/shared/node_modules
+      - /usr/src/app/gateway/node_modules
     depends_on:
       auth:
         condition: service_started
@@ -88,6 +91,7 @@ services:
       - ./services/user/.env:/usr/src/app/services/user/.env:ro
       - ./shared:/usr/src/app/shared
       - ./services/user:/usr/src/app/services/user
+      - /usr/src/app/shared/node_modules
       - /usr/src/app/services/user/node_modules
       - /usr/src/app/services/user/prisma/.prisma
     depends_on:
@@ -117,6 +121,7 @@ services:
       - ./services/inventory/.env:/usr/src/app/services/inventory/.env:ro
       - ./shared:/usr/src/app/shared
       - ./services/inventory:/usr/src/app/services/inventory
+      - /usr/src/app/shared/node_modules
       - /usr/src/app/services/inventory/node_modules
       - /usr/src/app/services/inventory/prisma/.prisma
     depends_on:
