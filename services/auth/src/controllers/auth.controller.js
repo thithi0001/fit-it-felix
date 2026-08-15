@@ -26,7 +26,8 @@ export const AuthController = {
     logout: async (req, res, next) => {
         try {
             const token = req.headers.authorization?.replace("Bearer ", "") || req.body.token;
-            const result = await AuthService.logout(token);
+            const refreshToken = req.body.refreshToken;
+            const result = await AuthService.logout(token, refreshToken);
             return res.json(successResponse({ data: result, message: "Logged out successfully" }));
         } catch (error) {
             return next(error);

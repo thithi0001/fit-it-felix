@@ -14,12 +14,6 @@ CREATE TYPE account_status AS ENUM (
     'locked'
 );
 
-CREATE TYPE approval_action AS ENUM (
-    'approved',
-    'rejected',
-    'cancelled'
-);
-
 
 -- =========================================================
 -- Roles
@@ -61,19 +55,19 @@ CREATE TABLE departments (
 CREATE TABLE employees (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 
-    department_id BIGINT,
+    department_id BIGINT NOT NULL,
 
     employee_code VARCHAR(30) UNIQUE NOT NULL,
 
     full_name VARCHAR(150) NOT NULL,
 
-    position VARCHAR(100),
+    position VARCHAR(100) NOT NULL,
 
-    phone VARCHAR(20),
+    phone VARCHAR(20) NOT NULL,
 
-    date_of_birth DATE,
+    date_of_birth DATE NOT NULL,
 
-    hire_date DATE,
+    hire_date DATE NOT NULL,
 
     termination_date DATE,
 
@@ -118,31 +112,6 @@ CREATE TABLE accounts (
 
 
 -- =========================================================
--- Approvals
--- =========================================================
-
-CREATE TABLE approvals (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-
-    table_name VARCHAR(100) NOT NULL,
-
-    record_id BIGINT NOT NULL,
-
-    approved_by_account_id BIGINT NOT NULL,
-
-    action approval_action NOT NULL,
-
-    note TEXT,
-
-    acted_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-
-    CONSTRAINT fk_approvals_account
-        FOREIGN KEY (approved_by_account_id)
-        REFERENCES accounts(id)
-);
-
-
--- =========================================================
 -- Indexes
 -- =========================================================
 
@@ -154,12 +123,6 @@ ON accounts(employee_id);
 
 CREATE INDEX idx_employees_department
 ON employees(department_id);
-
-CREATE INDEX idx_approvals_record
-ON approvals(table_name, record_id);
-
-CREATE INDEX idx_approvals_account
-ON approvals(approved_by_account_id);
 
 
 -- =========================================================
@@ -176,24 +139,20 @@ BEGIN
 END;
 $$;
 
-
 CREATE TRIGGER trg_roles_updated_at
 BEFORE UPDATE ON roles
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at();
-
 
 CREATE TRIGGER trg_departments_updated_at
 BEFORE UPDATE ON departments
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at();
 
-
 CREATE TRIGGER trg_employees_updated_at
 BEFORE UPDATE ON employees
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at();
-
 
 CREATE TRIGGER trg_accounts_updated_at
 BEFORE UPDATE ON accounts

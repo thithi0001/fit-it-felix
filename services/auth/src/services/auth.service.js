@@ -1,6 +1,8 @@
 import { AuthRepository } from "../repositories/auth.repository.js";
 import { blacklistToken, signAccessToken, signRefreshToken, verifyRefreshToken } from "../utils/jwt.js";
 import { badRequest, unauthorized } from "../../../../shared/utils/errors.js";
+import { publish } from "../../../../shared/rabbitmq/index.js";
+import { EVENTS, EXCHANGES } from "../../../../shared/constants/index.js";
 
 const buildUserPayload = (account) => {
     const employee = account.employees ?? null;
@@ -38,6 +40,7 @@ export const AuthService = {
 
         const accessToken = signAccessToken({
             sub: String(account.id),
+            employee_id: String(account.employee_id),
             username: account.username,
             email: account.email,
             role: account.roles?.code,
@@ -46,6 +49,17 @@ export const AuthService = {
         const refreshToken = signRefreshToken({
             sub: String(account.id),
             username: account.username,
+        });
+
+        await publish(EXCHANGES.USER, EVENTS.USER_LOGIN, {
+            type: EVENTS.USER_LOGIN,
+            data: {
+                id: String(account.id),
+                employee_id: String(account.employee_id),
+                username: account.username,
+                email: account.email,
+                role: account.roles?.code ?? null,
+            },
         });
 
         return {
@@ -65,6 +79,7 @@ export const AuthService = {
 
             const accessToken = signAccessToken({
                 sub: String(account.id),
+                employee_id: String(account.employee_id),
                 username: account.username,
                 email: account.email,
                 role: account.roles?.code,
@@ -76,12 +91,15 @@ export const AuthService = {
         }
     },
 
-    logout: async (token) => {
+    logout: async (token, refreshToken) => {
         if (!token) {
             throw badRequest("Token is required");
         }
 
         blacklistToken(token);
+        if (refreshToken) {
+            blacklistToken(refreshToken);
+        }
         return { success: true, message: "Logged out successfully" };
     },
 };

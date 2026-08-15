@@ -1,9 +1,8 @@
-import { getChannel } from "./connection.js";
+import { connectRabbitMQ, getChannel } from "./connection.js";
 
-export const consume = async (
-    queue,
-    callback
-) => {
+export const consume = async (queue, callback) => {
+    await connectRabbitMQ();
+
     const channel = getChannel();
 
     await channel.assertQueue(queue, {

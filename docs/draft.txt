@@ -1,0 +1,20 @@
+cmd tạo thư mục service
+mkdir prisma src && touch .env .env.example Dockerfile package.json
+cd prisma && touch schema.prisma
+cd src && touch app.js server.js
+mkdir config consumers controllers middlewares publishers repositories routes services utils validations
+
+viết các file trong thư mục ở trên
+viết Dockerfile, package.json, .env
+tạo route trong gateway
+thêm vào app trong gateway
+thêm vào docker-compose.yml
+tạo health route
+
+npm i
+npx prisma db pull
+npx prisma generate 
+khởi động lại vscode
+
+khởi động docker
+docker compose 

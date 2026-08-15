@@ -20,6 +20,12 @@ const normalizeJsonValue = (value) => {
     return value;
 };
 
+export const toBigInt = (value) => {
+    if (value === null || value === undefined) return null;
+    if (typeof value === "bigint") return value;
+    return BigInt(value);
+};
+
 const buildResponse = ({ success, message, data = null, meta = null, errors = null }) => {
     const response = {
         success,
