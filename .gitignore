@@ -15,3 +15,5 @@ coverage/
 revoked-tokens.json
 
 .DS_Store
+
+# docker-compose.yml

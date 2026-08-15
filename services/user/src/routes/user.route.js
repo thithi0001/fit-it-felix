@@ -6,10 +6,10 @@ const router = Router();
 
 router.get("/health", UserController.health);
 
-// read account list
+// read employee list
 router.get("/", authenticate, authorize("ADMIN", "MANAGER"), UserController.list);
 
-// read account
+// read employee
 router.get("/:id", authenticate, UserController.getById);
 
 // create employee + account

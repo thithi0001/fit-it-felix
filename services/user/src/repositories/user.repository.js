@@ -37,25 +37,25 @@ const generatePassword = (fullName, dateOfBirth) => {
 
 export const UserRepository = {
     findById: async (id) =>
-        prisma.accounts.findUnique({
-            where: { id },
+        prisma.employees.findUnique({
+            where: { id: toBigInt(id) },
             include: {
-                roles: true,
-                employees: {
+                departments: true,
+                accounts: {
                     include: {
-                        departments: true,
+                        roles: true,
                     },
                 },
             },
         }),
 
     list: async () =>
-        prisma.accounts.findMany({
+        prisma.employees.findMany({
             include: {
-                roles: true,
-                employees: {
+                departments: true,
+                accounts: {
                     include: {
-                        departments: true,
+                        roles: true,
                     },
                 },
             },
@@ -146,30 +146,31 @@ export const UserRepository = {
         });
     },
 
+    // nhân viên tự cập nhật thông tin cá nhân
     updateEmployee: async (id, payload) => {
         const {
             full_name,
-            employee_code,
-            date_of_birth,
-            department_id,
-            position,
+            // employee_code,
+            // date_of_birth,
+            // department_id,
+            // position,
             phone,
-            hire_date,
-            termination_date,
+            // hire_date,
+            // termination_date,
         } = payload;
 
         const updateData = {};
 
         if (full_name !== undefined) updateData.full_name = full_name;
-        if (employee_code !== undefined) updateData.employee_code = employee_code;
-        if (department_id !== undefined) updateData.department_id = toBigInt(department_id);
-        if (position !== undefined) updateData.position = position;
+        // if (employee_code !== undefined) updateData.employee_code = employee_code;
+        // if (department_id !== undefined) updateData.department_id = toBigInt(department_id);
+        // if (position !== undefined) updateData.position = position;
         if (phone !== undefined) updateData.phone = phone;
-        if (date_of_birth !== undefined) updateData.date_of_birth = parseDateInput(date_of_birth);
-        if (hire_date !== undefined) updateData.hire_date = parseDateInput(hire_date);
-        if (termination_date !== undefined) {
-            updateData.termination_date = termination_date === null ? null : parseDateInput(termination_date);
-        }
+        // if (date_of_birth !== undefined) updateData.date_of_birth = parseDateInput(date_of_birth);
+        // if (hire_date !== undefined) updateData.hire_date = parseDateInput(hire_date);
+        // if (termination_date !== undefined) {
+        //     updateData.termination_date = termination_date === null ? null : parseDateInput(termination_date);
+        // }
 
         if (Object.keys(updateData).length === 0) {
             throw new Error("No update fields provided");

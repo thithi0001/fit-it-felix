@@ -20,7 +20,11 @@ const buildUserPayload = (account) => {
                   employee_code: employee.employee_code,
                   full_name: employee.full_name,
                   position: employee.position,
-                  department: department?.name ?? null,
+                  phone: employee.phone,
+                  department_id: department?.id ?? null,
+                  department_name: department?.name ?? null,
+                  hire_date: employee.hire_date,
+
               }
             : null,
     };
@@ -51,16 +55,16 @@ export const AuthService = {
             username: account.username,
         });
 
-        await publish(EXCHANGES.USER, EVENTS.USER_LOGIN, {
-            type: EVENTS.USER_LOGIN,
-            data: {
-                id: String(account.id),
-                employee_id: String(account.employee_id),
-                username: account.username,
-                email: account.email,
-                role: account.roles?.code ?? null,
-            },
-        });
+        // await publish(EXCHANGES.USER, EVENTS.USER_LOGIN, {
+        //     type: EVENTS.USER_LOGIN,
+        //     data: {
+        //         id: String(account.id),
+        //         employee_id: String(account.employee_id),
+        //         username: account.username,
+        //         email: account.email,
+        //         role: account.roles?.code ?? null,
+        //     },
+        // });
 
         return {
             user: buildUserPayload(account),
