@@ -7,7 +7,7 @@ const router = Router();
 router.get("/health", UserController.health);
 
 // read account list
-router.get("/", authenticate, authorize("ADMIN"), UserController.list);
+router.get("/", authenticate, authorize("ADMIN", "MANAGER"), UserController.list);
 
 // read account
 router.get("/:id", authenticate, UserController.getById);
