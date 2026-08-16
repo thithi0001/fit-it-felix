@@ -12,27 +12,27 @@ const buildEmployeePayload = (employee) => {
         email: account?.email ?? null,
         employee: employee
             ? {
-                  employee_code: employee.employee_code,
-                  full_name: employee.full_name,
-                  position: employee.position,
-                  phone: employee.phone,
-                  date_of_birth: employee.date_of_birth,
-                  hire_date: employee.hire_date,
-                  termination_date: employee.termination_date,
-                  department: department
-                      ? {
-                            id: String(department.id),
-                            name: department.name,
-                        }
-                      : null,
-              }
+                employee_code: employee.employee_code,
+                full_name: employee.full_name,
+                position: employee.position,
+                phone: employee.phone,
+                date_of_birth: employee.date_of_birth,
+                hire_date: employee.hire_date,
+                termination_date: employee.termination_date,
+                department: department
+                    ? {
+                        id: String(department.id),
+                        name: department.name,
+                    }
+                    : null,
+            }
             : null,
     };
 };
 
 export const UserService = {
     getUserById: async (id) => {
-        const employee = await UserRepository.findById(Number(id));
+        const employee = await UserRepository.getById(Number(id));
         return employee ? buildEmployeePayload(employee) : null;
     },
 
