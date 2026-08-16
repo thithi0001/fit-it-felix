@@ -57,6 +57,7 @@ CREATE TABLE categories (
     name VARCHAR(100) NOT NULL,
     description TEXT,
 
+    -- Khung thời gian khấu hao theo loại thiết bị
     depreciation_period_min_months INTEGER,
     depreciation_period_max_months INTEGER,
 
@@ -103,6 +104,9 @@ CREATE TABLE devices (
     purchase_date DATE NOT NULL,
     purchase_price NUMERIC(18, 2) NOT NULL,
 
+    -- Nguyên giá TSCĐ dùng làm cơ sở tính khấu hao
+    original_cost NUMERIC(18, 2) NOT NULL,
+
     warranty_start_date DATE,
     warranty_end_date DATE,
 
@@ -119,10 +123,14 @@ CREATE TABLE devices (
 
     depreciation_start_date DATE,
 
+    -- Thời gian khấu hao thực tế của thiết bị,
+    -- phải nằm trong khoảng của category
     depreciation_period_months INTEGER,
 
+    -- Tổng khấu hao đã trích
     accumulated_depreciation NUMERIC(18, 2) NOT NULL DEFAULT 0,
 
+    -- Giá trị còn lại = original_cost - accumulated_depreciation
     book_value NUMERIC(18, 2) NOT NULL,
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -133,18 +141,25 @@ CREATE TABLE devices (
         REFERENCES categories(id),
 
     CONSTRAINT chk_devices_purchase_price
-        CHECK (purchase_price >= 0),
+        CHECK (
+            purchase_price >= 0
+        ),
+
+    CONSTRAINT chk_devices_original_cost
+        CHECK (
+            original_cost >= 0
+        ),
 
     CONSTRAINT chk_devices_accumulated_depreciation
         CHECK (
             accumulated_depreciation >= 0
-            AND accumulated_depreciation <= purchase_price
+            AND accumulated_depreciation <= original_cost
         ),
 
     CONSTRAINT chk_devices_book_value
         CHECK (
             book_value >= 0
-            AND book_value <= purchase_price
+            AND book_value <= original_cost
         ),
 
     CONSTRAINT chk_devices_depreciation_period
