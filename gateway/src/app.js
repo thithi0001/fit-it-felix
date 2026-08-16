@@ -9,6 +9,7 @@ const publicRoutes = [
     "/auth/health", 
     "/users/health",
     "/inventory/health",
+    "/devices/health",
 ];
 
 app.use((req, res, next) => {
@@ -24,6 +25,9 @@ app.use(authRoute);
 
 import userRoute from "./routes/user.route.js";
 app.use(userRoute);
+
+import deviceRoute from "./routes/device.route.js";
+app.use(deviceRoute);
 
 import inventoryRoute from "./routes/inventory.route.js";
 app.use(inventoryRoute);

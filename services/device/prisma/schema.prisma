@@ -1,0 +1,195 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model assign_request_details {
+  id                      BigInt          @id @default(autoincrement())
+  assign_request_id       BigInt
+  category_id             BigInt
+  requested_quantity      Int
+  approved_quantity       Int             @default(0)
+  approved_at             DateTime?       @db.Timestamptz(6)
+  approved_by_employee_id BigInt?
+  received_at             DateTime?       @db.Timestamptz(6)
+  status                  request_status  @default(pending)
+  categories              categories      @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_assign_request_details_category")
+  assign_requests         assign_requests @relation(fields: [assign_request_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_assign_request_details_request")
+
+  @@index([approved_by_employee_id], map: "idx_assign_request_details_approved_by")
+  @@index([category_id], map: "idx_assign_request_details_category")
+  @@index([assign_request_id], map: "idx_assign_request_details_request")
+}
+
+model assign_requests {
+  id                     BigInt                   @id @default(autoincrement())
+  created_by_employee_id BigInt
+  request_name           String                   @db.VarChar(150)
+  reason                 String?
+  status                 request_status           @default(pending)
+  requested_at           DateTime                 @default(now()) @db.Timestamptz(6)
+  created_at             DateTime                 @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime                 @default(now()) @db.Timestamptz(6)
+  assign_request_details assign_request_details[]
+
+  @@index([created_by_employee_id], map: "idx_assign_requests_created_by_employee")
+  @@index([status], map: "idx_assign_requests_status")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model categories {
+  id                             BigInt                   @id @default(autoincrement())
+  code                           String                   @unique @db.VarChar(50)
+  name                           String                   @db.VarChar(100)
+  description                    String?
+  depreciation_period_min_months Int?
+  depreciation_period_max_months Int?
+  is_active                      Boolean                  @default(true)
+  created_at                     DateTime                 @default(now()) @db.Timestamptz(6)
+  updated_at                     DateTime                 @default(now()) @db.Timestamptz(6)
+  assign_request_details         assign_request_details[]
+  devices                        devices[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model device_disposals {
+  id                     BigInt    @id @default(autoincrement())
+  device_id              BigInt    @unique
+  created_by_employee_id BigInt
+  actual_disposal_date   DateTime? @db.Date
+  actual_disposal_value  Decimal?  @db.Decimal(18, 2)
+  reason                 String?
+  created_at             DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime  @default(now()) @db.Timestamptz(6)
+  devices                devices   @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_device_disposals_device")
+
+  @@index([created_by_employee_id], map: "idx_device_disposals_created_by_employee")
+}
+
+model device_request_details {
+  id                      BigInt          @id @default(autoincrement())
+  device_request_id       BigInt
+  device_id               BigInt
+  status                  request_status  @default(pending)
+  approved_at             DateTime?       @db.Timestamptz(6)
+  approved_by_employee_id BigInt?
+  handover_requested_at   DateTime?       @db.Timestamptz(6)
+  handed_over_at          DateTime?       @db.Timestamptz(6)
+  devices                 devices         @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_device_request_details_device")
+  device_requests         device_requests @relation(fields: [device_request_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_device_request_details_request")
+
+  @@index([approved_by_employee_id], map: "idx_device_request_details_approved_by")
+  @@index([device_id], map: "idx_device_request_details_device")
+  @@index([device_request_id], map: "idx_device_request_details_request")
+}
+
+model device_requests {
+  id                     BigInt                   @id @default(autoincrement())
+  created_by_employee_id BigInt
+  request_name           String                   @db.VarChar(150)
+  request_type           device_request_type
+  reason                 String?
+  status                 request_status           @default(pending)
+  requested_at           DateTime                 @default(now()) @db.Timestamptz(6)
+  created_at             DateTime                 @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime                 @default(now()) @db.Timestamptz(6)
+  device_request_details device_request_details[]
+
+  @@index([created_by_employee_id], map: "idx_device_requests_created_by_employee")
+  @@index([request_type, status], map: "idx_device_requests_type_status")
+}
+
+model device_state_histories {
+  id         BigInt       @id @default(autoincrement())
+  device_id  BigInt
+  old_state  device_state
+  new_state  device_state
+  created_at DateTime     @default(now()) @db.Timestamptz(6)
+  devices    devices      @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_device_state_histories_device")
+
+  @@index([device_id, created_at], map: "idx_device_state_histories_device")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model devices {
+  id                         BigInt                   @id @default(autoincrement())
+  category_id                BigInt
+  device_code                String                   @unique @db.VarChar(50)
+  device_name                String                   @db.VarChar(150)
+  serial_number              String                   @unique @db.VarChar(100)
+  model                      String?                  @db.VarChar(100)
+  manufacturer_name          String?                  @db.VarChar(150)
+  supplier_name              String?                  @db.VarChar(150)
+  manufacture_date           DateTime?                @db.Date
+  purchase_date              DateTime                 @db.Date
+  purchase_price             Decimal                  @db.Decimal(18, 2)
+  original_cost              Decimal                  @db.Decimal(18, 2)
+  warranty_start_date        DateTime?                @db.Date
+  warranty_end_date          DateTime?                @db.Date
+  specifications             String?
+  state                      device_state             @default(available)
+  depreciation_method        depreciation_method      @default(straight_line)
+  depreciation_start_date    DateTime?                @db.Date
+  depreciation_period_months Int?
+  accumulated_depreciation   Decimal                  @default(0) @db.Decimal(18, 2)
+  book_value                 Decimal                  @db.Decimal(18, 2)
+  created_at                 DateTime                 @default(now()) @db.Timestamptz(6)
+  updated_at                 DateTime                 @default(now()) @db.Timestamptz(6)
+  device_disposals           device_disposals?
+  device_request_details     device_request_details[]
+  device_state_histories     device_state_histories[]
+  categories                 categories               @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_devices_category")
+  employee_devices           employee_devices[]
+
+  @@index([category_id], map: "idx_devices_category")
+  @@index([state], map: "idx_devices_state")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This table contains exclusion constraints and requires additional setup for migrations. Visit https://pris.ly/d/exclusion-constraints for more info.
+model employee_devices {
+  id          BigInt    @id @default(autoincrement())
+  device_id   BigInt
+  employee_id BigInt
+  assigned_at DateTime  @db.Timestamptz(6)
+  returned_at DateTime? @db.Timestamptz(6)
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime  @default(now()) @db.Timestamptz(6)
+  devices     devices   @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_employee_devices_device")
+
+  @@index([device_id], map: "idx_employee_devices_device")
+  @@index([employee_id], map: "idx_employee_devices_employee")
+}
+
+enum depreciation_method {
+  straight_line
+}
+
+enum device_request_type {
+  return
+  retrieval
+}
+
+enum device_state {
+  available
+  in_use
+  broken
+  under_maintenance
+  awaiting_parts
+  under_warranty
+  testing
+  awaiting_disposal
+  disposed
+}
+
+enum request_status {
+  pending
+  success
+  fail
+}

@@ -108,6 +108,36 @@ services:
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-tttn_c18_2026_refresh}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
 
+  device:
+    build:
+      context: .
+      dockerfile: services/device/Dockerfile
+    container_name: device
+    restart: unless-stopped
+    ports:
+      - "3003:3003"
+    volumes:
+      - ./.env:/usr/src/app/.env:ro
+      - ./services/device/.env:/usr/src/app/services/device/.env:ro
+      - ./shared:/usr/src/app/shared
+      - ./services/device:/usr/src/app/services/device
+      - /usr/src/app/shared/node_modules
+      - /usr/src/app/services/device/node_modules
+      - /usr/src/app/services/device/prisma/.prisma
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./.env
+      - ./services/device/.env
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      DEVICE_PORT: ${DEVICE_PORT:-3003}
+      RABBITMQ_URL: ${RABBITMQ_URL:-amqp://guest:guest@rabbitmq:5672}
+      JWT_SECRET: ${JWT_SECRET:-tttn_c18_2026}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-tttn_c18_2026_refresh}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+
   inventory:
     build:
       context: .
