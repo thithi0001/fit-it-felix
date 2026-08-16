@@ -30,6 +30,7 @@ if (loadEnv.NODE_ENV) {
   console.log("[gateway-env] AI_SERVICE_URL:", loadEnv.AI_SERVICE_URL);
   console.log("[gateway-env] AUDIT_SERVICE_URL:", loadEnv.AUDIT_SERVICE_URL);
   console.log("[gateway-env] REPORT_SERVICE_URL:", loadEnv.REPORT_SERVICE_URL);
+  console.log("[gateway-env] NOTIFICATION_SERVICE_URL:", loadEnv.NOTIFICATION_SERVICE_URL);
 }
 
 export const env = loadEnv;
