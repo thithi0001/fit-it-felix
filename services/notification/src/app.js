@@ -11,8 +11,8 @@ app.use(cors());
 app.use(morgan("dev"));
 app.use(json());
 
-import auditRoute from "./routes/audit.route.js";
-app.use("/audits", auditRoute);
+import notificationRoute from "./routes/notification.route.js";
+app.use("/notification", notificationRoute);
 
 app.use(errorMiddleware);
 

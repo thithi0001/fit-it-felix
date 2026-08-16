@@ -12,7 +12,7 @@ app.use(morgan("dev"));
 app.use(json());
 
 import maintenanceRouter from "./routes/maintenance.route.js";
-app.use("/maintenance", maintenanceRouter);
+app.use("/maintenances", maintenanceRouter);
 
 app.use(errorMiddleware);
 

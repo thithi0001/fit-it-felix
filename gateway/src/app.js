@@ -9,12 +9,12 @@ const publicRoutes = [
     "/auth/health", 
     "/users/health",
     "/devices/health",
-    "/inventory/health",
-    "/maintenance/health",
+    "/inventories/health",
+    "/maintenances/health",
     "/ai/health",
-    "/audit/health",
-    "/report/health",
-    "/notification/health",
+    "/audits/health",
+    "/reports/health",
+    "/notifications/health",
 ];
 
 app.use((req, res, next) => {
@@ -42,6 +42,9 @@ app.use(maintenanceRoute);
 
 import auditRoute from "./routes/audit.route.js";
 app.use(auditRoute);
+
+import notificationRoute from "./routes/notification.route.js";
+app.use(notificationRoute);
 
 app.use(errorMiddleware);
 

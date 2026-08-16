@@ -2,7 +2,7 @@ import { env } from "../config/env.js";
 import { createServiceProxyRouter } from "../../../shared/utils/index.js";
 
 const inventoryRouter = createServiceProxyRouter({
-    routePrefix: "/inventory",
+    routePrefix: "/inventories",
     target: env.INVENTORY_SERVICE_URL,
     log: true,
 });

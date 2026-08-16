@@ -12,7 +12,7 @@ app.use(morgan("dev"));
 app.use(json());
 
 import inventoryRoute from "./routes/inventory.route.js";
-app.use("/inventory", inventoryRoute);
+app.use("/inventories", inventoryRoute);
 
 app.use(errorMiddleware);
 
