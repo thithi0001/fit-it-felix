@@ -6,7 +6,7 @@ export const AuditController = {
 
     getById: async (req, res, next) => {
         try {
-            const audit = await AuditService.findAuditById(req.params.id);
+            const audit = await AuditService.getById(req.params.id);
             return res.json(successResponse({ data: audit, message: 'Audit found' }));
         } catch (error) {
             next(error);
@@ -31,40 +31,40 @@ export const AuditController = {
         }
     },
 
-    findByDateRange: async (req, res, next) => {
+    getByDateRange: async (req, res, next) => {
         try {
             const { startDate, endDate } = req.query;
-            const audits = await AuditService.findAuditsByDateRange(startDate, endDate);
+            const audits = await AuditService.getByDateRange(startDate, endDate);
             return res.json(successResponse({ data: audits, message: 'Audits found by date range' }));
         } catch (error) {
             next(error);
         }
     },
 
-    findByEmployeeId: async (req, res, next) => {
+    getByEmployeeId: async (req, res, next) => {
         try {
             const { employeeId } = req.query;
-            const audits = await AuditService.findAuditsByEmployeeId(employeeId);
+            const audits = await AuditService.getByEmployeeId(employeeId);
             return res.json(successResponse({ data: audits, message: 'Audits found by employee ID' }));
         } catch (error) {
             next(error);
         }
     },
 
-    findByAction: async (req, res, next) => {
+    getByAction: async (req, res, next) => {
         try {
             const { action } = req.query;
-            const audits = await AuditService.findAuditsByAction(action);
+            const audits = await AuditService.getByAction(action);
             return res.json(successResponse({ data: audits, message: 'Audits found by action' }));
         } catch (error) {
             next(error);
         }
     },
 
-    findByService: async (req, res, next) => {
+    getByService: async (req, res, next) => {
         try {
             const { service } = req.query;
-            const audits = await AuditService.findAuditsByService(service);
+            const audits = await AuditService.getByService(service);
             return res.json(successResponse({ data: audits, message: 'Audits found by service' }));
         } catch (error) {
             next(error);

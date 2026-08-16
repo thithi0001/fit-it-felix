@@ -36,7 +36,7 @@ const generatePassword = (fullName, dateOfBirth) => {
 };
 
 export const UserRepository = {
-    findById: async (id) =>
+    getById: async (id) =>
         prisma.employees.findUnique({
             where: { id: toBigInt(id) },
             include: {
@@ -62,7 +62,7 @@ export const UserRepository = {
             orderBy: { full_name: "asc" },
         }),
 
-    findbyUsername: async (username) =>
+    getByUsername: async (username) =>
         prisma.accounts.findUnique({
             where: { username },
             include: {

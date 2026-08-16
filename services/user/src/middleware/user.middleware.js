@@ -22,7 +22,7 @@ const parseSchema = (schema, data) => {
 
 export const authenticate = (req, res, next) =>
     sharedAuthenticate(async (payload) => {
-        const employee = await UserRepository.findById(Number(payload.employee_id));
+        const employee = await UserRepository.getById(Number(payload.employee_id));
         if (!employee) {
             throw unauthorized("User not found");
         }

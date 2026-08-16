@@ -32,7 +32,7 @@ const buildUserPayload = (account) => {
 
 export const AuthService = {
     login: async ({ username, password }) => {
-        const account = await AuthRepository.findByUsername(username);
+        const account = await AuthRepository.getByUsername(username);
         if (!account) {
             throw unauthorized("Invalid username or password");
         }
@@ -76,7 +76,7 @@ export const AuthService = {
     refreshToken: async (token) => {
         try {
             const payload = verifyRefreshToken(token);
-            const account = await AuthRepository.findById(Number(payload.sub));
+            const account = await AuthRepository.getById(Number(payload.sub));
             if (!account) {
                 throw unauthorized("Invalid refresh token");
             }

@@ -7,7 +7,7 @@ export const AuditRepository = {
         // i will implement this function later
     },
 
-    findById: async (id) => {
+    getById: async (id) => {
         // i will implement this function later
         return prisma.audit_logs.findUnique({
             where: { id: toBigInt(id) },
@@ -21,8 +21,7 @@ export const AuditRepository = {
         });
     },
 
-    // find records between 2 timestamps
-    findByDateRange: async (startDate, endDate) => {
+    getByDateRange: async (startDate, endDate) => {
         // i will implement this function later
         return prisma.audit_logs.findMany({
             orderBy: { created_at: 'desc' },
@@ -35,8 +34,7 @@ export const AuditRepository = {
         });
     },
 
-    // find by employee id
-    findByEmployeeId: async (employeeId) => {
+    getByEmployeeId: async (employeeId) => {
         // i will implement this function later
         return prisma.audit_logs.findMany({
             orderBy: { created_at: 'desc' },
@@ -44,8 +42,7 @@ export const AuditRepository = {
         });
     },
 
-    // find by action
-    findByAction: async (action) => {
+    getByAction: async (action) => {
         // i will implement this function later
         return prisma.audit_logs.findMany({
             orderBy: { created_at: 'desc' },
@@ -53,8 +50,7 @@ export const AuditRepository = {
         });
     },
 
-    // find by service 
-    findByService: async (service) => {
+    getByService: async (service) => {
         // i will implement this function later
         return prisma.audit_logs.findMany({
             orderBy: { created_at: 'desc' },

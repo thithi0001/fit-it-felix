@@ -36,7 +36,7 @@ export const validateRefreshToken = (req, res, next) => {
 };
 
 export const authenticate = sharedAuthenticate(async (payload) => {
-    const account = await AuthRepository.findById(Number(payload.sub));
+    const account = await AuthRepository.getById(Number(payload.sub));
     if (!account) {
         throw new Error("Account not found");
     }

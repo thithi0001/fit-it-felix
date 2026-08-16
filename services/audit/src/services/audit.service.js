@@ -18,28 +18,28 @@ export const AuditService = {
         return audits.map(buildAuditPayload);
     },
 
-    findAuditById: async (id) => {
-        const audit = await AuditRepository.findById(Number(id));
+    getById: async (id) => {
+        const audit = await AuditRepository.getById(Number(id));
         return audit ? buildAuditPayload(audit) : null;
     },
 
-    findAuditsByDateRange: async (startDate, endDate) => {
-        const audits = await AuditRepository.findByDateRange(startDate, endDate);
+    getByDateRange: async (startDate, endDate) => {
+        const audits = await AuditRepository.getByDateRange(startDate, endDate);
         return audits.map(buildAuditPayload);
     },
 
-    findAuditsByEmployeeId: async (employeeId) => {
-        const audits = await AuditRepository.findByEmployeeId(employeeId);
+    getByEmployeeId: async (employeeId) => {
+        const audits = await AuditRepository.getByEmployeeId(employeeId);
         return audits.map(buildAuditPayload);
     },
 
-    findAuditsByAction: async (action) => {
-        const audits = await AuditRepository.findByAction(action);
+    getByAction: async (action) => {
+        const audits = await AuditRepository.getByAction(action);
         return audits.map(buildAuditPayload);
     },
     
-    findAuditsByService: async (service) => {
-        const audits = await AuditRepository.findByService(service);
+    getByService: async (service) => {
+        const audits = await AuditRepository.getByService(service);
         return audits.map(buildAuditPayload);
     }
 };

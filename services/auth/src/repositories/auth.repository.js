@@ -1,8 +1,9 @@
 import prisma from "../config/prisma.js";
 import bcrypt from "bcryptjs";
+import { toBigInt } from "../../../../shared/utils/response.js";
 
 export const AuthRepository = {
-    findByUsername: async (username) =>
+    getByUsername: async (username) =>
         prisma.accounts.findUnique({
             where: { username },
             include: {
@@ -15,9 +16,9 @@ export const AuthRepository = {
             },
         }),
 
-    findById: async (id) =>
+    getById: async (id) =>
         prisma.accounts.findUnique({
-            where: { id },
+            where: { id: toBigInt(id) },
             include: {
                 roles: true,
                 employees: {
