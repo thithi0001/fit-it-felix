@@ -168,6 +168,36 @@ services:
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-tttn_c18_2026_refresh}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
 
+  maintenance:
+    build:
+      context: .
+      dockerfile: services/maintenance/Dockerfile
+    container_name: maintenance
+    restart: unless-stopped
+    ports:
+      - "3005:3005"
+    volumes:
+      - ./.env:/usr/src/app/.env:ro
+      - ./services/maintenance/.env:/usr/src/app/services/maintenance/.env:ro
+      - ./shared:/usr/src/app/shared
+      - ./services/maintenance:/usr/src/app/services/maintenance
+      - /usr/src/app/shared/node_modules
+      - /usr/src/app/services/maintenance/node_modules
+      - /usr/src/app/services/maintenance/prisma/.prisma
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./.env
+      - ./services/maintenance/.env
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      MAINTENANCE_PORT: ${MAINTENANCE_PORT:-3005}
+      RABBITMQ_URL: ${RABBITMQ_URL:-amqp://guest:guest@rabbitmq:5672}
+      JWT_SECRET: ${JWT_SECRET:-tttn_c18_2026}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-tttn_c18_2026_refresh}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+
   shared:
     build:
       context: .

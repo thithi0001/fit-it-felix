@@ -1,0 +1,207 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model acceptance_reports {
+  id                      BigInt         @id @default(autoincrement())
+  created_by_employee_id  BigInt
+  plan_id                 BigInt
+  report_name             String         @default("BIÊN BẢN NGHIỆM THU") @db.VarChar(150)
+  description             String?
+  review                  String?
+  status                  request_status @default(pending)
+  approved_by_employee_id BigInt?
+  created_at              DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime       @default(now()) @db.Timestamptz(6)
+  plans                   plans          @relation(fields: [plan_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_acceptance_reports_plan")
+
+  @@index([plan_id], map: "idx_acceptance_reports_plan")
+  @@index([status], map: "idx_acceptance_reports_status")
+}
+
+model adjust_plans {
+  id                      BigInt         @id @default(autoincrement())
+  created_by_employee_id  BigInt
+  plan_id                 BigInt
+  request_name            String         @default("YÊU CẦU ĐIỀU CHỈNH KẾ HOẠCH BẢO TRÌ") @db.VarChar(150)
+  reason                  String?
+  suggestion              String?
+  status                  request_status @default(pending)
+  approved_by_employee_id BigInt?
+  created_at              DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime       @default(now()) @db.Timestamptz(6)
+  plans                   plans          @relation(fields: [plan_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_adjust_plans_plan")
+
+  @@index([plan_id], map: "idx_adjust_plans_plan")
+  @@index([status], map: "idx_adjust_plans_status")
+}
+
+model damage_reports {
+  id                     BigInt        @id @default(autoincrement())
+  created_by_employee_id BigInt
+  plan_id                BigInt
+  device_id              BigInt
+  report_name            String        @default("BIÊN BẢN XÁC ĐỊNH HƯ HỎNG") @db.VarChar(150)
+  description            String?
+  solution               String?
+  repair_action          repair_action @default(normal_repair)
+  created_at             DateTime      @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime      @default(now()) @db.Timestamptz(6)
+  plans                  plans         @relation(fields: [plan_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_damage_reports_plan")
+
+  @@index([device_id], map: "idx_damage_reports_device")
+  @@index([plan_id], map: "idx_damage_reports_plan")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model maintenance_histories {
+  id                     BigInt                    @id @default(autoincrement())
+  plan_id                BigInt
+  created_by_employee_id BigInt
+  started_at             DateTime                  @db.Timestamptz(6)
+  ended_at               DateTime?                 @db.Timestamptz(6)
+  old_state              String                    @db.VarChar(50)
+  new_state              String                    @db.VarChar(50)
+  description            String?
+  budget                 Decimal?                  @db.Decimal(18, 2)
+  history_type           maintenance_history_type?
+  suggestion             String?
+  suggestion_at          DateTime?                 @db.Timestamptz(6)
+  created_at             DateTime                  @default(now()) @db.Timestamptz(6)
+  plans                  plans                     @relation(fields: [plan_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_maintenance_histories_plan")
+
+  @@index([plan_id, created_at], map: "idx_maintenance_histories_plan")
+}
+
+model maintenance_requests {
+  id                      BigInt                   @id @default(autoincrement())
+  created_by_employee_id  BigInt
+  plan_id                 BigInt
+  request_type            maintenance_request_type
+  reason                  String?
+  status                  request_status           @default(pending)
+  approved_by_employee_id BigInt?
+  created_at              DateTime                 @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime                 @default(now()) @db.Timestamptz(6)
+  plans                   plans                    @relation(fields: [plan_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_maintenance_requests_plan")
+
+  @@index([plan_id], map: "idx_maintenance_requests_plan")
+  @@index([request_type, status], map: "idx_maintenance_requests_type_status")
+}
+
+model plan_assignments {
+  id                  BigInt                       @id @default(autoincrement())
+  plan_id             BigInt
+  employee_id         BigInt
+  availability_status employee_availability_status @default(available)
+  assigned_at         DateTime                     @default(now()) @db.Timestamptz(6)
+  created_at          DateTime                     @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime                     @default(now()) @db.Timestamptz(6)
+  plans               plans                        @relation(fields: [plan_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_plan_assignments_plan")
+
+  @@unique([plan_id, employee_id], map: "uq_plan_assignments_plan_employee")
+  @@index([employee_id], map: "idx_plan_assignments_employee")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model plans {
+  id                     BigInt                  @id @default(autoincrement())
+  repair_id              BigInt?
+  created_by_employee_id BigInt
+  device_id              BigInt
+  plan_type              plan_type               @default(maintenance)
+  description            String?
+  estimated_cost         Decimal?                @db.Decimal(18, 2)
+  planned_start_at       DateTime                @db.Timestamptz(6)
+  planned_end_at         DateTime                @db.Timestamptz(6)
+  actual_start_at        DateTime?               @db.Timestamptz(6)
+  actual_end_at          DateTime?               @db.Timestamptz(6)
+  status                 plan_status             @default(not_started)
+  created_at             DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime                @default(now()) @db.Timestamptz(6)
+  acceptance_reports     acceptance_reports[]
+  adjust_plans           adjust_plans[]
+  damage_reports         damage_reports[]
+  maintenance_histories  maintenance_histories[]
+  maintenance_requests   maintenance_requests[]
+  plan_assignments       plan_assignments[]
+  repairs                repairs?                @relation(fields: [repair_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_plans_repair")
+
+  @@index([created_by_employee_id], map: "idx_plans_created_by_employee")
+  @@index([device_id], map: "idx_plans_device")
+  @@index([repair_id], map: "idx_plans_repair")
+  @@index([status], map: "idx_plans_status")
+  @@index([plan_type, status], map: "idx_plans_type_status")
+}
+
+model repairs {
+  id                      BigInt          @id @default(autoincrement())
+  created_by_employee_id  BigInt
+  device_id               BigInt
+  request_name            String          @default("YÊU CẦU SỬA CHỮA") @db.VarChar(150)
+  priority                repair_priority @default(medium)
+  description             String?
+  status                  request_status  @default(pending)
+  approved_by_employee_id BigInt?
+  created_at              DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime        @default(now()) @db.Timestamptz(6)
+  plans                   plans[]
+
+  @@index([created_by_employee_id], map: "idx_repairs_created_by_employee")
+  @@index([device_id], map: "idx_repairs_device")
+  @@index([status], map: "idx_repairs_status")
+}
+
+enum employee_availability_status {
+  available
+  unavailable
+}
+
+enum maintenance_history_type {
+  maintenance
+  repair
+  dispose
+}
+
+enum maintenance_request_type {
+  send_warranty
+  dispose
+}
+
+enum plan_status {
+  not_started
+  ongoing
+  completed
+  cancelled
+}
+
+enum plan_type {
+  maintenance
+  repair
+}
+
+enum repair_action {
+  normal_repair
+  send_warranty
+  request_parts
+  dispose
+}
+
+enum repair_priority {
+  low
+  medium
+  high
+  critical
+}
+
+enum request_status {
+  pending
+  success
+  fail
+}

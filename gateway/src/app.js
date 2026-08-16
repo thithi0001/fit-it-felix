@@ -8,8 +8,9 @@ const publicRoutes = [
     "/auth/refresh",
     "/auth/health", 
     "/users/health",
-    "/inventory/health",
     "/devices/health",
+    "/inventory/health",
+    "/maintenance/health",
 ];
 
 app.use((req, res, next) => {
@@ -31,6 +32,9 @@ app.use(deviceRoute);
 
 import inventoryRoute from "./routes/inventory.route.js";
 app.use(inventoryRoute);
+
+import maintenanceRoute from "./routes/maintenance.route.js";
+app.use(maintenanceRoute);
 
 app.use(errorMiddleware);
 
