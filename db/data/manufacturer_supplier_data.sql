@@ -23,4 +23,4 @@ INSERT INTO "suppliers" ("code", "name") VALUES
 ('SUP-NETMAX', 'Netmax Technology'),
 ('SUP-PHUONGVIET', 'Phương Việt Group'),
 ('SUP-NGUYENKIM', 'Siêu thị Điện máy Nguyễn Kim'),
-('SUP-TAPHAT', 'Công ty TNHH Thương mại Tân Phát');
+('SUP-TANPHAT', 'Công ty TNHH Thương mại Tân Phát');
