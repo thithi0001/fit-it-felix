@@ -73,7 +73,10 @@ services:
       GATEWAY_PORT: ${GATEWAY_PORT:-3000}
       AUTH_SERVICE_URL: ${AUTH_SERVICE_URL:-http://auth:3001}
       USER_SERVICE_URL: ${USER_SERVICE_URL:-http://user:3002}
+      DEVICE_SERVICE_URL: ${DEVICE_SERVICE_URL:-http://device:3003}
       INVENTORY_SERVICE_URL: ${INVENTORY_SERVICE_URL:-http://inventory:3004}
+      MAINTENANCE_SERVICE_URL: ${MAINTENANCE_SERVICE_URL:-http://maintenance:3005}
+      AUDIT_SERVICE_URL: ${AUDIT_SERVICE_URL:-http://audit:3007}
       JWT_SECRET: ${JWT_SECRET:-tttn_c18_2026}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-tttn_c18_2026_refresh}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
@@ -193,6 +196,36 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV:-development}
       MAINTENANCE_PORT: ${MAINTENANCE_PORT:-3005}
+      RABBITMQ_URL: ${RABBITMQ_URL:-amqp://guest:guest@rabbitmq:5672}
+      JWT_SECRET: ${JWT_SECRET:-tttn_c18_2026}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-tttn_c18_2026_refresh}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+
+  audit:
+    build:
+      context: .
+      dockerfile: services/audit/Dockerfile
+    container_name: audit
+    restart: unless-stopped
+    ports:
+      - "3007:3007"
+    volumes:
+      - ./.env:/usr/src/app/.env:ro
+      - ./services/audit/.env:/usr/src/app/services/audit/.env:ro
+      - ./shared:/usr/src/app/shared
+      - ./services/audit:/usr/src/app/services/audit
+      - /usr/src/app/shared/node_modules
+      - /usr/src/app/services/audit/node_modules
+      - /usr/src/app/services/audit/prisma/.prisma
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./.env
+      - ./services/audit/.env
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      AUDIT_PORT: ${AUDIT_PORT:-3007}
       RABBITMQ_URL: ${RABBITMQ_URL:-amqp://guest:guest@rabbitmq:5672}
       JWT_SECRET: ${JWT_SECRET:-tttn_c18_2026}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-tttn_c18_2026_refresh}

@@ -16,6 +16,7 @@ const loadEnv = {
   AI_SERVICE_URL: process.env.AI_SERVICE_URL ?? "http://localhost:3006",
   AUDIT_SERVICE_URL: process.env.AUDIT_SERVICE_URL ?? "http://localhost:3007",
   REPORT_SERVICE_URL: process.env.REPORT_SERVICE_URL ?? "http://localhost:3008",
+  NOTIFICATION_SERVICE_URL: process.env.NOTIFICATION_SERVICE_URL ?? "http://localhost:3009",
   TEST: process.env.TEST ?? "cannot load env",
 };
 

@@ -59,6 +59,7 @@ export const UserRepository = {
                     },
                 },
             },
+            orderBy: { full_name: "asc" },
         }),
 
     findbyUsername: async (username) =>

@@ -1,7 +1,7 @@
 cmd tạo thư mục service
 mkdir prisma src && touch .env .env.example Dockerfile package.json
 cd prisma && touch schema.prisma
-cd src && touch app.js server.js
+cd .. && cd src && touch app.js server.js
 mkdir config consumers controllers middlewares publishers repositories routes services utils validations
 
 viết các file trong thư mục ở trên

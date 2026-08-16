@@ -1,0 +1,30 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model audit_logs {
+  id                BigInt   @id @default(autoincrement())
+  actor_employee_id BigInt
+  actor_name        String?  @db.VarChar(100)
+  action            String   @db.VarChar(50)
+  service_name      String   @db.VarChar(100)
+  table_name        String   @db.VarChar(100)
+  record_id         BigInt?
+  old_value         Json?
+  new_value         Json?
+  ip_address        String?  @db.Inet
+  user_agent        String?
+  created_at        DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([action], map: "idx_audit_logs_action")
+  @@index([actor_employee_id], map: "idx_audit_logs_actor_employee")
+  @@index([created_at], map: "idx_audit_logs_created_at")
+  @@index([service_name], map: "idx_audit_logs_service_name")
+  @@index([table_name, record_id], map: "idx_audit_logs_table_record")
+}

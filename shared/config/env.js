@@ -21,6 +21,7 @@ const loadedEnv = {
   AI_PORT: Number(process.env.AI_PORT ?? 3006),
   AUDIT_PORT: Number(process.env.AUDIT_PORT ?? 3007),
   REPORT_PORT: Number(process.env.REPORT_PORT ?? 3008),
+  NOTIFICATION_PORT: Number(process.env.NOTIFICATION_PORT ?? 3009),
   RABBITMQ_URL: process.env.RABBITMQ_URL ?? "amqp://guest:guest@rabbitmq:5672",
   JWT_SECRET: process.env.JWT_SECRET ?? "jwt_secret_not_set",
   JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET ?? "jwt_refresh_secret_not_set",
