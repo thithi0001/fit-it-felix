@@ -2,7 +2,10 @@ import { Router } from "express";
 import { NotificationController } from "../controllers/notification.controller.js";
 import { authenticate, authorize } from "../../../../shared/middlewares/auth.middleware.js";
 import { ROLES } from "../../../../shared/constants/roles.js";
-import { createNotificationValidation, requireNotificationOwnerShip } from "../middlewares/notification.middleware.js";
+import { 
+    createNotificationValidation
+    // requireNotificationOwnerShip
+} from "../middlewares/notification.middleware.js";
 
 const router = Router();
 
@@ -23,19 +26,19 @@ router.get(
 router.get(
     "/employees/:employeeId",
     authenticate(),
-    requireNotificationOwnerShip,
+    // requireNotificationOwnerShip,
     NotificationController.getByEmployeeId
 );
 router.get(
     "/:id",
     authenticate(),
-    requireNotificationOwnerShip,
+    // requireNotificationOwnerShip,
     NotificationController.getById
 );
 router.put(
     "/:id",
     authenticate(),
-    requireNotificationOwnerShip,
+    // requireNotificationOwnerShip,
     NotificationController.update
 );
 

@@ -12,7 +12,7 @@ app.use(morgan("dev"));
 app.use(json());
 
 import notificationRoute from "./routes/notification.route.js";
-app.use("/notification", notificationRoute);
+app.use("/notifications", notificationRoute);
 
 app.use(errorMiddleware);
 
