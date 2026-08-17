@@ -120,7 +120,7 @@ CREATE TABLE receipt_details (
 
     receipt_id BIGINT NOT NULL,
 
-    item_id BIGINT NOT NULL,
+    inventory_id BIGINT NOT NULL,
 
     quantity INTEGER NOT NULL DEFAULT 1,
 
@@ -133,9 +133,9 @@ CREATE TABLE receipt_details (
         REFERENCES receipts(id)
         ON DELETE CASCADE,
 
-    CONSTRAINT fk_receipt_details_item
-        FOREIGN KEY (item_id)
-        REFERENCES items(id),
+    CONSTRAINT fk_receipt_details_inventory
+        FOREIGN KEY (inventory_id)
+        REFERENCES inventory(id),
 
     CONSTRAINT chk_receipt_details_quantity
         CHECK (quantity > 0),
@@ -143,8 +143,8 @@ CREATE TABLE receipt_details (
     CONSTRAINT chk_receipt_details_unit_price
         CHECK (unit_price IS NULL OR unit_price >= 0),
 
-    CONSTRAINT uq_receipt_details_receipt_item
-        UNIQUE (receipt_id, item_id)
+    CONSTRAINT uq_receipt_details_receipt_inventory
+        UNIQUE (receipt_id, inventory_id)
 );
 
 
@@ -181,7 +181,7 @@ CREATE TABLE item_request_details (
 
     item_request_id BIGINT NOT NULL,
 
-    item_id BIGINT NOT NULL,
+    inventory_id BIGINT NOT NULL,
 
     quantity INTEGER NOT NULL DEFAULT 1,
 
@@ -190,15 +190,15 @@ CREATE TABLE item_request_details (
         REFERENCES item_requests(id)
         ON DELETE CASCADE,
 
-    CONSTRAINT fk_item_request_details_item
-        FOREIGN KEY (item_id)
-        REFERENCES items(id),
+    CONSTRAINT fk_item_request_details_inventory
+        FOREIGN KEY (inventory_id)
+        REFERENCES inventory(id),
 
     CONSTRAINT chk_item_request_details_quantity
         CHECK (quantity > 0),
 
-    CONSTRAINT uq_item_request_details_request_item
-        UNIQUE (item_request_id, item_id)
+    CONSTRAINT uq_item_request_details_request_inventory
+        UNIQUE (item_request_id, inventory_id)
 );
 
 
@@ -247,8 +247,8 @@ ON receipts(supplier_id);
 CREATE INDEX idx_receipts_created_by_employee
 ON receipts(created_by_employee_id);
 
-CREATE INDEX idx_receipt_details_item
-ON receipt_details(item_id);
+CREATE INDEX idx_receipt_details_inventory
+ON receipt_details(inventory_id);
 
 CREATE INDEX idx_item_requests_created_by_employee
 ON item_requests(created_by_employee_id);
@@ -259,8 +259,8 @@ ON item_requests(request_type, status);
 CREATE INDEX idx_item_requests_approved_by_employee
 ON item_requests(approved_by_employee_id);
 
-CREATE INDEX idx_item_request_details_item
-ON item_request_details(item_id);
+CREATE INDEX idx_item_request_details_inventory
+ON item_request_details(inventory_id);
 
 CREATE INDEX idx_inventory_item
 ON inventory(item_id);

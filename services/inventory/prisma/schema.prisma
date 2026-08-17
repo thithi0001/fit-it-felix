@@ -10,14 +10,16 @@ datasource db {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model inventory {
-  id          BigInt    @id @default(autoincrement())
-  item_id     BigInt
-  supplier_id BigInt
-  quantity    Int       @default(0)
-  created_at  DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at  DateTime  @default(now()) @db.Timestamptz(6)
-  items       items     @relation(fields: [item_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_inventory_item")
-  suppliers   suppliers @relation(fields: [supplier_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_inventory_supplier")
+  id                   BigInt                 @id @default(autoincrement())
+  item_id              BigInt
+  supplier_id          BigInt
+  quantity             Int                    @default(0)
+  created_at           DateTime               @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime               @default(now()) @db.Timestamptz(6)
+  items                items                  @relation(fields: [item_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_inventory_item")
+  suppliers            suppliers              @relation(fields: [supplier_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_inventory_supplier")
+  item_request_details item_request_details[]
+  receipt_details      receipt_details[]
 
   @@unique([item_id, supplier_id], map: "uq_inventory_item_supplier")
   @@index([item_id], map: "idx_inventory_item")
@@ -28,13 +30,13 @@ model inventory {
 model item_request_details {
   id              BigInt        @id @default(autoincrement())
   item_request_id BigInt
-  item_id         BigInt
+  inventory_id    BigInt
   quantity        Int           @default(1)
-  items           items         @relation(fields: [item_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_item_request_details_item")
+  inventory       inventory     @relation(fields: [inventory_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_item_request_details_inventory")
   item_requests   item_requests @relation(fields: [item_request_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_item_request_details_request")
 
-  @@unique([item_request_id, item_id], map: "uq_item_request_details_request_item")
-  @@index([item_id], map: "idx_item_request_details_item")
+  @@unique([item_request_id, inventory_id], map: "uq_item_request_details_request_inventory")
+  @@index([inventory_id], map: "idx_item_request_details_inventory")
 }
 
 model item_requests {
@@ -56,18 +58,16 @@ model item_requests {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model items {
-  id                   BigInt                 @id @default(autoincrement())
-  manufacturer_id      BigInt
-  code                 String                 @unique @db.VarChar(50)
-  name                 String                 @db.VarChar(100)
-  unit                 String                 @db.VarChar(20)
-  minimum_stock        Int                    @default(1)
-  created_at           DateTime               @default(now()) @db.Timestamptz(6)
-  updated_at           DateTime               @default(now()) @db.Timestamptz(6)
-  inventory            inventory[]
-  item_request_details item_request_details[]
-  manufacturers        manufacturers          @relation(fields: [manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_items_manufacturer")
-  receipt_details      receipt_details[]
+  id              BigInt        @id @default(autoincrement())
+  manufacturer_id BigInt
+  code            String        @unique @db.VarChar(50)
+  name            String        @db.VarChar(100)
+  unit            String        @db.VarChar(20)
+  minimum_stock   Int           @default(1)
+  created_at      DateTime      @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime      @default(now()) @db.Timestamptz(6)
+  inventory       inventory[]
+  manufacturers   manufacturers @relation(fields: [manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_items_manufacturer")
 
   @@index([manufacturer_id], map: "idx_items_manufacturer")
 }
@@ -84,17 +84,17 @@ model manufacturers {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model receipt_details {
-  id         BigInt   @id @default(autoincrement())
-  receipt_id BigInt
-  item_id    BigInt
-  quantity   Int      @default(1)
-  unit_price Decimal? @db.Decimal(12, 2)
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  items      items    @relation(fields: [item_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_receipt_details_item")
-  receipts   receipts @relation(fields: [receipt_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_receipt_details_receipt")
+  id           BigInt    @id @default(autoincrement())
+  receipt_id   BigInt
+  inventory_id BigInt
+  quantity     Int       @default(1)
+  unit_price   Decimal?  @db.Decimal(12, 2)
+  created_at   DateTime  @default(now()) @db.Timestamptz(6)
+  inventory    inventory @relation(fields: [inventory_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_receipt_details_inventory")
+  receipts     receipts  @relation(fields: [receipt_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_receipt_details_receipt")
 
-  @@unique([receipt_id, item_id], map: "uq_receipt_details_receipt_item")
-  @@index([item_id], map: "idx_receipt_details_item")
+  @@unique([receipt_id, inventory_id], map: "uq_receipt_details_receipt_inventory")
+  @@index([inventory_id], map: "idx_receipt_details_inventory")
 }
 
 model receipts {

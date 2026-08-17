@@ -17,15 +17,15 @@ const buildUserPayload = (account) => {
         role: account.roles?.code ?? null,
         employee: employee
             ? {
-                  employee_code: employee.employee_code,
-                  full_name: employee.full_name,
-                  position: employee.position,
-                  phone: employee.phone,
-                  department_id: department?.id ?? null,
-                  department_name: department?.name ?? null,
-                  hire_date: employee.hire_date,
+                employee_code: employee.employee_code,
+                full_name: employee.full_name,
+                position: employee.position,
+                phone: employee.phone,
+                department_id: department?.id ?? null,
+                department_name: department?.name ?? null,
+                hire_date: employee.hire_date,
 
-              }
+            }
             : null,
     };
 };
