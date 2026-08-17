@@ -1,7 +1,7 @@
 import { NotificationRepository } from '../repositories/notification.repository.js';
 
 const buildNotificationPayload = (notification) => {
-    const noti_users = notification?.noti_users ?? null;
+    const noti_users = notification?.noti_users ?? [];
     
     return {
         id: String(notification.id),
@@ -11,14 +11,12 @@ const buildNotificationPayload = (notification) => {
         created_at: notification.created_at,
         reference_type: notification.reference_type ?? null,
         reference_id: notification.reference_id ?? null,
-        receiver_info: noti_users
-            ? {
-                id: String(noti_users.id),
-                employee_id: String(noti_users.employee_id),
-                is_read: noti_users.is_read,
-                read_at: noti_users.read_at
-            }
-            : null,
+        receiver_info: noti_users.map(user => ({
+            id: String(user.id),
+            employee_id: String(user.employee_id),
+            is_read: user.is_read,
+            read_at: user.read_at
+        })),
     };
 }
 

@@ -3,6 +3,7 @@ import { ROLES } from "../../../../shared/constants/roles.js";
 import { forbidden } from "../../../../shared/utils/errors.js";
 import { toBigInt } from "../../../../shared/utils/response.js";
 import { NotificationRepository } from "../repositories/notification.repository.js";
+import { createNofificationSchema } from "../validations/notification.validation.js";
 
 export const requireNotificationOwnerShip = async (req, res, next) => {
     try {
