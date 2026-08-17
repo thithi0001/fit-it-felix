@@ -5,7 +5,7 @@ import { successResponse } from "../../../../shared/utils/response.js";
 export const NotificationController = {
     health: async (req, res) => res.json({status: 'ok'}),
 
-    create: async (req, res) => {
+    create: async (req, res, next) => {
         try {
             const data = req.body;
             const notification = await NotificationService.create(data);
@@ -15,7 +15,7 @@ export const NotificationController = {
         }
     },
 
-    list: async (req, res) => {
+    list: async (req, res, next) => {
         try {
             const notifications = await NotificationService.list();
             return res.json(successResponse({ data: notifications, message: "Notifications retrieved successfully" }));
@@ -24,7 +24,7 @@ export const NotificationController = {
         }
     },
 
-    getById: async (req, res) => {
+    getById: async (req, res, next) => {
         try {
             const id = req.params.id;
             const notification = await NotificationService.getById(id);
@@ -34,7 +34,7 @@ export const NotificationController = {
         }
     },
 
-    getByEmployeeId: async (req, res) => {
+    getByEmployeeId: async (req, res, next) => {
         try {
             const employeeId = req.params.employeeId;
             const page = parseInt(req.query.page) || 1;
@@ -46,7 +46,7 @@ export const NotificationController = {
         }
     },
 
-    update: async (req, res) => {
+    update: async (req, res, next) => {
         try {
             const id = req.params.id;
             const isRead = req.body.is_read;
