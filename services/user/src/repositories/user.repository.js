@@ -98,7 +98,6 @@ export const UserRepository = {
             phone,
             email,
             role_id,
-            username,
             status = "active",
             hire_date,
             termination_date,
@@ -108,7 +107,7 @@ export const UserRepository = {
             throw new Error("Missing required fields: full_name, employee_code, email, role_id, date_of_birth");
         }
 
-        const generatedUsername = username || generateUsername(full_name, employee_code);
+        const generatedUsername = generateUsername(full_name, employee_code);
         const rawPassword = generatePassword(full_name, date_of_birth);
         const passwordHash = await bcrypt.hash(rawPassword, 10);
 
@@ -180,6 +179,14 @@ export const UserRepository = {
         return prisma.employees.update({
             where: { id: toBigInt(id) },
             data: updateData,
+            include: {
+                departments: true,
+                accounts: {
+                    include: {
+                        roles: true,
+                    },
+                },
+            },
         });
     },
 };

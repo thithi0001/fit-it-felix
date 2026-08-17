@@ -1,32 +1,38 @@
 import { Router } from "express";
 import { UserController } from "../controllers/user.controller.js";
-import { authenticate, authorize, requireEmployeeOwnership, validateUpdateEmployee } from "../middleware/user.middleware.js";
+import { authenticate, authorize, requireEmployeeOwnership, validateUpdateEmployee, validateCreateEmployee } from "../middleware/user.middleware.js";
+import { ROLES } from "../../../../shared/constants/roles.js";
 
 const router = Router();
 
 router.get("/health", UserController.health);
 
 // read employee list
-router.get("/", authenticate, authorize("ADMIN", "MANAGER"), UserController.list);
+router.get("/", authenticate, authorize(ROLES.ADMIN, ROLES.MANAGER), UserController.list);
 
 // read employee
 router.get("/:id", authenticate, UserController.getById);
 
 // create employee + account
-router.post("/", authenticate, authorize("ADMIN"), UserController.create);
+router.post(
+    "/", 
+    authenticate, 
+    authorize(ROLES.ADMIN), 
+    validateCreateEmployee,
+    UserController.create
+);
 
 // update employee
 router.put(
     "/employees/:id",
     authenticate,
-    authorize("ADMIN", "USER"),
     validateUpdateEmployee,
     requireEmployeeOwnership("id"),
     UserController.updateEmployee,
 );
 
 // create department
-// router.post("/departments", authenticate, authorize("ADMIN"), )
+// router.post("/departments", authenticate, authorize(ROLES.ADMIN), )
 
 // read department list
 // router.get("/departments", authenticate, )
@@ -35,7 +41,7 @@ router.put(
 // router.get("/departments/:id", authenticate, )
 
 // update department
-// router.put("/departments/:id", authenticate, authorize("ADMIN"), )
+// router.put("/departments/:id", authenticate, authorize(ROLES.ADMIN), )
 
 // read role list
 // router.get("/roles", authenticate, )

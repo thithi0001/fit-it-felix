@@ -1,3 +1,4 @@
+import { badRequest, notFound } from "../../../../shared/utils/errors.js";
 import { UserRepository } from "../repositories/user.repository.js";
 
 const buildEmployeePayload = (employee) => {
@@ -33,7 +34,11 @@ const buildEmployeePayload = (employee) => {
 export const UserService = {
     getUserById: async (id) => {
         const employee = await UserRepository.getById(Number(id));
-        return employee ? buildEmployeePayload(employee) : null;
+        if (!employee) {
+            throw notFound("User not found");
+        }
+
+        return buildEmployeePayload(employee);
     },
 
     listUsers: async () => {
@@ -41,6 +46,21 @@ export const UserService = {
         return employees.map(buildEmployeePayload);
     },
 
-    createUser: async (payload) => UserRepository.createAccount(payload),
-    updateEmployee: async (id, payload) => UserRepository.updateEmployee(id, payload),
+    createUser: async (payload) => {
+        const employee = await UserRepository.createAccount(payload);
+        if (!employee) {
+            throw badRequest("Cannot create user");
+        }
+
+        return buildEmployeePayload(employee);
+    },
+
+    updateEmployee: async (id, payload) => {
+        const employee = await UserRepository.updateEmployee(id, payload);
+        if (!employee) {
+            throw badRequest("Cannot update user");
+        }
+
+        return buildEmployeePayload(employee);
+    }
 };

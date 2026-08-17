@@ -9,3 +9,15 @@ logs
 npm-debug.log*
 Dockerfile
 **/Dockerfile
+dist
+coverage
+.vscode
+.idea
+README.md
+*.md
+**/*.md
+*.sqlite
+*.db
+*.pem
+*.key
+*.crt

@@ -77,6 +77,7 @@ services:
       INVENTORY_SERVICE_URL: ${INVENTORY_SERVICE_URL:-http://inventory:3004}
       MAINTENANCE_SERVICE_URL: ${MAINTENANCE_SERVICE_URL:-http://maintenance:3005}
       AUDIT_SERVICE_URL: ${AUDIT_SERVICE_URL:-http://audit:3007}
+      NOTIFICATION_SERVICE_URL: ${NOTIFICATION_SERVICE_URL:-http://notification:3009}
       JWT_SECRET: ${JWT_SECRET:-tttn_c18_2026}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-tttn_c18_2026_refresh}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
@@ -231,6 +232,36 @@ services:
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-tttn_c18_2026_refresh}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
 
+  notification:
+    build:
+      context: .
+      dockerfile: services/notification/Dockerfile
+    container_name: notification
+    restart: unless-stopped
+    ports:
+      - "3009:3009"
+    volumes:
+      - ./.env:/usr/src/app/.env:ro
+      - ./services/notification/.env:/usr/src/app/services/notification/.env:ro
+      - ./shared:/usr/src/app/shared
+      - ./services/notification:/usr/src/app/services/notification
+      - /usr/src/app/shared/node_modules
+      - /usr/src/app/services/notification/node_modules
+      - /usr/src/app/services/notification/prisma/.prisma
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./.env
+      - ./services/notification/.env
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      NOTIFICATION_PORT: ${NOTIFICATION_PORT:-3009}
+      RABBITMQ_URL: ${RABBITMQ_URL:-amqp://guest:guest@rabbitmq:5672}
+      JWT_SECRET: ${JWT_SECRET:-tttn_c18_2026}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-tttn_c18_2026_refresh}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      
   shared:
     build:
       context: .
