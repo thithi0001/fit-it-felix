@@ -40,7 +40,7 @@ export const NotificationController = {
             const page = parseInt(req.query.page) || 1;
             const limit = parseInt(req.query.limit) || 10;
             const notifications = await NotificationService.getByEmployeeId(employeeId, page, limit);
-            return res.json(successResponse({ data: notifications, message: "Notification retrieved successfully" }));
+            return res.json(successResponse({ data: notifications, message: "Notifications retrieved successfully" }));
         } catch (error) {
             next(error);
         }

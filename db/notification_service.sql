@@ -9,12 +9,16 @@
 -- =========================================================
 
 CREATE TYPE notification_type AS ENUM (
-    'maintenance_request',
+    'acceptance_report',
+    'damage_report',
     'device_request',
-    'assign_request',
     'inventory_request',
+    'maintenance_request',
+    'repair_request',
+    'plan_schedule',
     'approval',
-    'system'
+    'system',
+    'test'
 );
 
 

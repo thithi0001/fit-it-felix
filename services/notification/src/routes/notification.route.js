@@ -3,8 +3,8 @@ import { NotificationController } from "../controllers/notification.controller.j
 import { authenticate, authorize } from "../../../../shared/middlewares/auth.middleware.js";
 import { ROLES } from "../../../../shared/constants/roles.js";
 import { 
-    createNotificationValidation
-    // requireNotificationOwnerShip
+    createNotificationValidation,
+    requireNotificationOwnerShip
 } from "../middlewares/notification.middleware.js";
 
 const router = Router();
@@ -26,19 +26,19 @@ router.get(
 router.get(
     "/employees/:employeeId",
     authenticate(),
-    // requireNotificationOwnerShip,
+    requireNotificationOwnerShip,
     NotificationController.getByEmployeeId
 );
 router.get(
     "/:id",
     authenticate(),
-    // requireNotificationOwnerShip,
+    requireNotificationOwnerShip,
     NotificationController.getById
 );
 router.put(
     "/:id",
     authenticate(),
-    // requireNotificationOwnerShip,
+    requireNotificationOwnerShip,
     NotificationController.update
 );
 
