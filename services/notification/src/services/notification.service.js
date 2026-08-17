@@ -1,3 +1,4 @@
+import { badRequest, notFound } from '../../../../shared/utils/errors.js';
 import { NotificationRepository } from '../repositories/notification.repository.js';
 
 const buildNotificationPayload = (notification) => {
@@ -23,11 +24,19 @@ const buildNotificationPayload = (notification) => {
 export const NotificationService = {
     async create(data) {
         const notification = await NotificationRepository.create(data);
+        if (!notification) {
+            throw badRequest("Cannot create notification");
+        }
+
         return buildNotificationPayload(notification);
     },
 
     async getById(id) {
-        const notification = await NotificationRepository.getById(id);
+        const notification = await NotificationRepository.getById(Number(id));
+        if (!notification) {
+            throw notFound("Notification not found");
+        }
+
         return buildNotificationPayload(notification);
     },
 
@@ -37,13 +46,17 @@ export const NotificationService = {
     },
 
     async getByEmployeeId(employeeId, page = 1, limit = 10) {
-        const notifications = await NotificationRepository.getByEmployeeId(employeeId, page, limit);
+        const notifications = await NotificationRepository.getByEmployeeId(Number(employeeId), page, limit);
         return notifications.map(buildNotificationPayload);
     },
     
     async update(id, isRead) {
-        const noti_users = await NotificationRepository.update(id, isRead);
+        const noti_users = await NotificationRepository.update(Number(id), Boolean(isRead));
         const notification = await NotificationRepository.getById(noti_users.notification_id);
+        if (!notification) {
+            throw badRequest("Cannot update notification");
+        }
+
         return buildNotificationPayload(notification);
     }
 };
