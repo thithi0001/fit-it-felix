@@ -55,7 +55,7 @@ export const InventoryController = {
     approveRequest: async (req, res, next) => {
         try {
             const { id } = req.params;
-            const approvedRequest = await InventoryService.approveRequest(id);
+            const approvedRequest = await InventoryService.approveRequest(id, req.body);
             return res.json(successResponse({ data: approvedRequest, message: "Item request approved" }));
         } catch (error) {
             next(error);

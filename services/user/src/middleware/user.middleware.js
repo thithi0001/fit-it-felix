@@ -2,23 +2,7 @@ import { badRequest, forbidden, unauthorized } from "../../../../shared/utils/er
 import { authenticate as sharedAuthenticate, authorize as sharedAuthorize } from "../../../../shared/middlewares/auth.middleware.js";
 import { UserRepository } from "../repositories/user.repository.js";
 import { updateEmployeeSchema, createEmployeeSchema } from "../validations/user.validation.js";
-
-const parseSchema = (schema, data) => {
-    const input = data ?? {};
-    const result = schema.safeParse(input);
-
-    if (!result.success) {
-        const issues = result.error?.issues ?? result.error?.errors ?? [];
-        const errors = issues.map((issue) => ({
-            field: issue.path?.join(".") ?? "body",
-            message: issue.message,
-        }));
-
-        throw badRequest("Validation failed", errors);
-    }
-
-    return result.data;
-};
+import { parseSchema } from "../../../../shared/validations/parseSchema.validation.js";
 
 export const authenticate = (req, res, next) =>
     sharedAuthenticate(async (payload) => {

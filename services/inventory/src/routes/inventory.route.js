@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { InventoryController } from "../controllers/inventory.controller.js";
 import { authenticate, authorize } from "../../../../shared/middlewares/auth.middleware.js";
+import { validateApproveItemRequest, validateCreateItemRequest } from "../middlewares/inventory.middleware.js";
 import { ROLES } from "../../../../shared/constants/roles.js";
 
 const router = Router();
@@ -51,7 +52,7 @@ router.put(
     '/item-requests/:id',
     authenticate(),
     authorize(ROLES.MANAGER),
-    // validate
+    validateApproveItemRequest,
     InventoryController.approveRequest
 );
 
@@ -60,7 +61,7 @@ router.post(
     '/item-requests',
     authenticate(),
     authorize(ROLES.TECHNICIAN),
-    // validate
+    validateCreateItemRequest,
     InventoryController.createRequest
 );
 
