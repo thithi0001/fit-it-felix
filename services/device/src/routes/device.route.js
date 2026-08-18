@@ -17,47 +17,47 @@ const router = Router();
 router.get("/health", DeviceController.health);
 
 // tạo yêu cầu cấp phát thiết bị
-router.post(
-  "/assign-devices",
-  authenticate(),
-  validateCreateAssignRequest,
-  DeviceController.createAssignRequest,
-);
+// router.post(
+//   "/assign-requests",
+//   authenticate(),
+//   validateCreateAssignRequest,
+//   DeviceController.createAssignRequest,
+// );
 
 // duyệt yêu cầu cấp phát thiết bị
-router.put(
-  "/assign-requests/:id",
-  authenticate(),
-  authorize(ROLES.MANAGER),
-  validateApproveAssignRequest,
-  DeviceController.approveAssignRequest,
-);
+// router.put(
+//   "/assign-requests/:id",
+//   authenticate(),
+//   authorize(ROLES.MANAGER),
+//   validateApproveAssignRequest,
+//   DeviceController.approveAssignRequest,
+// );
 
 // lấy chi tiết yêu cầu cấp phát thiết bị
-router.get(
-  "/assign-requests/:id",
-  authenticate(),
-  authorize(ROLES.ADMIN, ROLES.MANAGER, ROLES.USER),
-  requireAssignRequestOwnership,
-  DeviceController.getAssignRequestById,
-);
+// router.get(
+//   "/assign-requests/:id",
+//   authenticate(),
+//   authorize(ROLES.ADMIN, ROLES.MANAGER, ROLES.USER),
+//   requireAssignRequestOwnership,
+//   DeviceController.getAssignRequestById,
+// );
 
 // lấy danh sách yêu cầu cấp phát thiết bị
-router.get(
-  "/assign-requests",
-  authenticate(),
-  authorize(ROLES.ADMIN, ROLES.MANAGER),
-  DeviceController.listAssignRequests,
-);
+// router.get(
+//   "/assign-requests",
+//   authenticate(),
+//   authorize(ROLES.ADMIN, ROLES.MANAGER),
+//   DeviceController.listAssignRequests,
+// );
 
 // lấy danh sách yêu cầu cấp phát thiết bị theo nhân viên
-router.get(
-  "/assign-requests/employees/:employeeId",
-  authenticate(),
-  authorize(ROLES.ADMIN, ROLES.MANAGER, ROLES.USER),
-  requireAssignRequestOwnership,
-  DeviceController.listAssignRequestsByEmployeeId,
-);
+// router.get(
+//   "/assign-requests/employees/:employeeId",
+//   authenticate(),
+//   authorize(ROLES.ADMIN, ROLES.MANAGER, ROLES.USER),
+//   requireAssignRequestOwnership,
+//   DeviceController.listAssignRequestsByEmployeeId,
+// );
 // lấy danh sách loại thiết bị
 router.get("/categories", authenticate(), DeviceController.listCategories);
 // lấy danh sách thiết bị
