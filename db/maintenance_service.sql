@@ -191,8 +191,6 @@ CREATE TABLE damage_reports (
 
     plan_id BIGINT NOT NULL,
 
-    device_id BIGINT NOT NULL,
-
     report_name VARCHAR(150) NOT NULL
         DEFAULT 'BIÊN BẢN XÁC ĐỊNH HƯ HỎNG',
 
@@ -394,9 +392,6 @@ ON plan_assignments(employee_id);
 
 CREATE INDEX idx_damage_reports_plan
 ON damage_reports(plan_id);
-
-CREATE INDEX idx_damage_reports_device
-ON damage_reports(device_id);
 
 CREATE INDEX idx_acceptance_reports_plan
 ON acceptance_reports(plan_id);
