@@ -132,7 +132,7 @@ export const DeviceRepository = {
     getDevicesByCategoryId: async (categoryId) => {
         return prisma.devices.findMany({
             where: {
-                categories: toBigInt(categoryId)
+                category_id: toBigInt(categoryId)
             },
         });
     },
