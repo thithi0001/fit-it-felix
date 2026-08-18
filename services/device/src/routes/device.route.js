@@ -1,7 +1,12 @@
 import { Router } from "express";
 import { DeviceController } from "../controllers/device.controller.js";
 import { authenticate, authorize} from "../../../../shared/middlewares/auth.middleware.js";
-import { requireAssignRequestOwnership, validateApproveAssignRequest, validateCreateAssignRequest, validateUpdateDevice } from "../middlewares/device.middleware.js";
+import { 
+    requireAssignRequestOwnership,
+    validateApproveAssignRequest,
+    validateCreateAssignRequest,
+    validateUpdateDevice
+} from "../middlewares/device.middleware.js";
 import { ROLES } from "../../../../shared/constants/roles.js";
 
 const router = Router();

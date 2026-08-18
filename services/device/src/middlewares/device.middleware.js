@@ -2,12 +2,12 @@ import prisma from "../config/prisma.js";
 import { ROLES } from "../../../../shared/constants/roles.js";
 import { forbidden } from "../../../../shared/utils/errors.js";
 import { toBigInt } from "../../../../shared/utils/response.js";
-import { parseSchema } from "../../../../shared/validations/parseSchema.validation";
+import { parseSchema } from "../../../../shared/validations/parseSchema.validation.js";
 import {
     approveAssignRequestDetailSchema,
     createAssignRequestSchema,
     updateDeviceSchema
-} from "../validations/device.validation";
+} from "../validations/device.validation.js";
 
 export const validateCreateAssignRequest = (req, res, next) => {
     try {

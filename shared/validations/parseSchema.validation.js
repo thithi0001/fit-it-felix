@@ -1,3 +1,5 @@
+import { badRequest } from "../utils/errors.js";
+
 export const parseSchema = (schema, data) => {
     const input = data ?? {};
     const result = schema.safeParse(input);

@@ -4,7 +4,7 @@ import { successResponse } from "../../../../shared/utils/response.js";
 export const DeviceController = {
     health: (req, res) => res.json({ status: "OK" }),
 
-    createAssignRequest: (req, res, next) => {
+    createAssignRequest: async (req, res, next) => {
         try {
             const data = req.body;
             const assignRequest = await DeviceService.createAssignRequest(data);
@@ -14,7 +14,7 @@ export const DeviceController = {
         }
     },
 
-    approveAssignRequest: (req, res, next) => {
+    approveAssignRequest: async (req, res, next) => {
         try {
             const id = req.params.id;
             const data = req.body;
@@ -25,7 +25,7 @@ export const DeviceController = {
         }
     },
     
-    getAssignRequestById: (req, res, next) => {
+    getAssignRequestById: async (req, res, next) => {
         try {
             const id = req.params.id;
             const assignRequest = await DeviceService.getAssignRequestById(id);
@@ -35,7 +35,7 @@ export const DeviceController = {
         }
     },
     
-    listAssignRequests: (req, res, next) => {
+    listAssignRequests: async (req, res, next) => {
         try {
             const assignRequests = await DeviceService.listAssignRequests();
             return res.json(successResponse({ data: assignRequests, message: "Assign device requests found" }));
@@ -44,7 +44,7 @@ export const DeviceController = {
         }
     },
     
-    listAssignRequestsByEmployeeId: (req, res, next) => {
+    listAssignRequestsByEmployeeId: async (req, res, next) => {
         try {
             const employeeId = req.params.employeeId;
             const assignRequests = await DeviceService.listAssignRequestsByEmployeeId(employeeId);
@@ -54,7 +54,7 @@ export const DeviceController = {
         }
     },
     
-    listDevices: (req, res, next) => {
+    listDevices: async (req, res, next) => {
         try {
             const devices = await DeviceService.listDevices();
             return res.json(successResponse({ data: devices, message: "Devices found" }));
@@ -63,7 +63,7 @@ export const DeviceController = {
         }
     },
     
-    getDeviceById: (req, res, next) => {
+    getDeviceById: async (req, res, next) => {
         try {
             const id = req.params.id;
             const device = await DeviceService.getDeviceById(id);
@@ -73,7 +73,7 @@ export const DeviceController = {
         }
     },
     
-    listDevicesByEmployeeId: (req, res, next) => {
+    listDevicesByEmployeeId: async (req, res, next) => {
         try {
             const employeeId = req.params.employeeId;
             const devices = await DeviceService.listDevicesByEmployeeId(employeeId);
@@ -83,7 +83,7 @@ export const DeviceController = {
         }
     },
     
-    listDevicesByCategoryId: (req, res, next) => {
+    listDevicesByCategoryId: async (req, res, next) => {
         try {
             const categoryId = req.params.categoryId;
             const devices = await DeviceService.listDevicesByCategoryId(categoryId);
@@ -93,7 +93,7 @@ export const DeviceController = {
         }
     },
     
-    listCategories: (req, res, next) => {
+    listCategories: async (req, res, next) => {
         try {
             const categories = await DeviceService.listCategories();
             return res.json(successResponse({ data: categories, message: "Categories found" }));
@@ -102,7 +102,7 @@ export const DeviceController = {
         }
     },
     
-    getCategoryById: (req, res, next) => {
+    getCategoryById: async (req, res, next) => {
         try {
             const id = req.params.id;
             const category = await DeviceService.getCategoryById(id);
@@ -112,7 +112,7 @@ export const DeviceController = {
         }
     },
     
-    getDeviceStateHistories: (req, res, next) => {
+    getDeviceStateHistories: async (req, res, next) => {
         try {
             const deviceId = req.params.id;
             const stateHistories = await DeviceService.getDeviceStateHistories(deviceId);
@@ -122,7 +122,7 @@ export const DeviceController = {
         }
     },
     
-    updateDevice: (req, res, next) => {
+    updateDevice: async (req, res, next) => {
         try {
             const id = req.params.id;
             const updateData = req.body;
