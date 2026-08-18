@@ -48,9 +48,10 @@ export const NotificationController = {
 
     update: async (req, res, next) => {
         try {
-            const id = req.params.id;
+            const notificationId = req.params.id;
+            const employeeId = req.user.employee_id;
             const isRead = req.body.is_read;
-            const updatedNotification = await NotificationService.update(id, isRead);
+            const updatedNotification = await NotificationService.update(notificationId, employeeId, isRead);
             return res.json(successResponse({ data: updatedNotification, message: "Notification updated successfully" }));
         } catch (error) {
             next(error);

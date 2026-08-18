@@ -40,6 +40,9 @@ app.use(inventoryRoute);
 import maintenanceRoute from "./routes/maintenance.route.js";
 app.use(maintenanceRoute);
 
+import aiRoute from "./routes/ai.route.js";
+app.use(aiRoute);
+
 import auditRoute from "./routes/audit.route.js";
 app.use(auditRoute);
 

@@ -65,9 +65,14 @@ export const NotificationRepository = {
         });
     },
 
-    async update(id, isRead) {
+    async update(notificationId, employeeId, isRead) {
         return prisma.noti_users.update({
-            where: { id: toBigInt(id) },
+            where: { 
+                notification_id_employee_id: {
+                    notification_id: toBigInt(notificationId),
+                    employee_id: toBigInt(employeeId)
+                }
+             },
             data: { is_read: isRead }
         });
     }
