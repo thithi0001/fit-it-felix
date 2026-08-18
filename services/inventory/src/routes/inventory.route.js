@@ -1,7 +1,11 @@
 import { Router } from "express";
 import { InventoryController } from "../controllers/inventory.controller.js";
 import { authenticate, authorize } from "../../../../shared/middlewares/auth.middleware.js";
-import { validateApproveItemRequest, validateCreateItemRequest } from "../middlewares/inventory.middleware.js";
+import { 
+    requireItemRequestOwnership,
+    validateApproveItemRequest,
+    validateCreateItemRequest
+} from "../middlewares/inventory.middleware.js";
 import { ROLES } from "../../../../shared/constants/roles.js";
 
 const router = Router();
@@ -35,7 +39,7 @@ router.get(
     '/item-requests/:id',
     authenticate(),
     authorize(ROLES.ADMIN, ROLES.MANAGER, ROLES.TECHNICIAN),
-    // ownership for TECHNICIAN => chỉ xem request do mình tạo
+    requireItemRequestOwnership,
     InventoryController.getRequestById
 );
 
