@@ -240,8 +240,6 @@ CREATE TABLE assign_requests (
 
     created_by_employee_id BIGINT NOT NULL,
 
-    request_name VARCHAR(150) NOT NULL,
-
     reason TEXT,
 
     status request_status NOT NULL DEFAULT 'pending',
@@ -304,8 +302,6 @@ CREATE TABLE device_requests (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 
     created_by_employee_id BIGINT NOT NULL,
-
-    request_name VARCHAR(150) NOT NULL,
 
     request_type device_request_type NOT NULL,
 

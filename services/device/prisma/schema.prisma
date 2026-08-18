@@ -30,7 +30,6 @@ model assign_request_details {
 model assign_requests {
   id                     BigInt                   @id @default(autoincrement())
   created_by_employee_id BigInt
-  request_name           String                   @db.VarChar(150)
   reason                 String?
   status                 request_status           @default(pending)
   requested_at           DateTime                 @default(now()) @db.Timestamptz(6)
@@ -92,7 +91,6 @@ model device_request_details {
 model device_requests {
   id                     BigInt                   @id @default(autoincrement())
   created_by_employee_id BigInt
-  request_name           String                   @db.VarChar(150)
   request_type           device_request_type
   reason                 String?
   status                 request_status           @default(pending)

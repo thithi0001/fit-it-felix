@@ -72,6 +72,11 @@ export const InventoryService = {
 		return buildRequestPayload(request);
 	},
 
+	listRequest: async () => {
+		const requests = await InventoryRepository.listItemRequests();
+		return requests.map(buildRequestPayload);
+	},
+
 	getRequestById: async (id) => {
 		const request = await InventoryRepository.getRequestById(Number(id));
 		if (!request) {

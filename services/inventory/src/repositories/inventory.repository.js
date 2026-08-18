@@ -90,6 +90,27 @@ export const InventoryRepository = {
         });
     },
 
+    listItemRequests: async () => {
+        return prisma.item_requests.findMany({
+            include: {
+                item_request_details: {
+                    include: {
+                        inventory: {
+                            include: {
+                                suppliers: true,
+                                items: {
+                                    include: {
+                                        manufacturers: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    },
+
     getRequestById: async (id) => {
         return prisma.item_requests.findUnique({
             where: { id: toBigInt(id) },
