@@ -50,9 +50,9 @@ export const NotificationService = {
         return notifications.map(buildNotificationPayload);
     },
     
-    async update(id, isRead) {
-        const noti_users = await NotificationRepository.update(Number(id), Boolean(isRead));
-        const notification = await NotificationRepository.getById(noti_users.notification_id);
+    async update(notificationId, employeeId, isRead) {
+        const noti_user = await NotificationRepository.update(Number(notificationId), Number(employeeId), isRead);
+        const notification = await NotificationRepository.getById(Number(notificationId));
         if (!notification) {
             throw badRequest("Cannot update notification");
         }
