@@ -30,6 +30,19 @@ router.post(
 );
 
 router.get(
+    "/plans/status/:status",
+    authenticate(),
+    MaintenanceController.listPlansByStatus
+);
+
+router.get(
+    "/plans/assignments/:employeeId",
+    authenticate(),
+    authorize(ROLES.ADMIN, ROLES.MANAGER, ROLES.TECHNICIAN),
+    MaintenanceController.getPlansByAssignment
+);
+
+router.get(
     "/plans/:id",
     authenticate(),
     MaintenanceController.getPlanById
@@ -41,26 +54,6 @@ router.put(
     authorize(ROLES.MANAGER),
     validateUpdatePlan,
     MaintenanceController.updatePlan
-);
-
-router.get(
-    "/plans",
-    authenticate(),
-    authorize(ROLES.ADMIN, ROLES.MANAGER),
-    MaintenanceController.listPlans
-);
-
-router.get(
-    "/plans/status/:status",
-    authenticate(),
-    MaintenanceController.listPlansByStatus
-);
-
-router.get(
-    "/plans/assignments/:employeeId",
-    authenticate(),
-    authorize(ROLES.ADMIN, ROLES.MANAGER, ROLES.TECHNICIAN),
-    MaintenanceController.getPlansByAssignment
 );
 
 router.get(
@@ -84,6 +77,13 @@ router.put(
     MaintenanceController.completePlan
 );
 
+router.get(
+    "/plans",
+    authenticate(),
+    authorize(ROLES.ADMIN, ROLES.MANAGER),
+    MaintenanceController.listPlans
+);
+
 // router.put(
 //     "/plans/:id/cancel",
 //     authenticate(),
@@ -101,18 +101,18 @@ router.post(
     MaintenanceController.createRepairRequest
 );
 
+router.get(
+    "/repairs/:id",
+    authenticate(),
+    MaintenanceController.getRepairRequestById
+);
+
 router.put(
     "/repairs/:id/approve",
     authenticate(),
     authorize(ROLES.MANAGER),
     validateApproveRepair,
     MaintenanceController.approveRepairRequest
-);
-
-router.get(
-    "/repairs/:id",
-    authenticate(),
-    MaintenanceController.getRepairRequestById
 );
 
 // Adjust Plan routes
@@ -124,18 +124,18 @@ router.post(
     MaintenanceController.createAdjustPlanRequest
 );
 
+router.get(
+    "/adjust-plans/:id",
+    authenticate(),
+    MaintenanceController.getAdjustPlanRequestById
+);
+
 router.put(
     "/adjust-plans/:id/approve",
     authenticate(),
     authorize(ROLES.MANAGER),
     validateApproveAdjustPlan,
     MaintenanceController.approveAdjustPlanRequest
-);
-
-router.get(
-    "/adjust-plans/:id",
-    authenticate(),
-    MaintenanceController.getAdjustPlanRequestById
 );
 
 // Damage Report routes
@@ -162,18 +162,18 @@ router.post(
     MaintenanceController.createMaintenanceRequest
 );
 
+router.get(
+    "/maintenance-requests/:id",
+    authenticate(),
+    MaintenanceController.getMaintenanceRequestById
+);
+
 router.put(
     "/maintenance-requests/:id/approve",
     authenticate(),
     authorize(ROLES.MANAGER),
     validateApproveMaintenanceRequest,
     MaintenanceController.approveMaintenanceRequest
-);
-
-router.get(
-    "/maintenance-requests/:id",
-    authenticate(),
-    MaintenanceController.getMaintenanceRequestById
 );
 
 // Acceptance Report routes
@@ -185,18 +185,18 @@ router.post(
     MaintenanceController.createAcceptanceReport
 );
 
+router.get(
+    "/acceptance-reports/:id",
+    authenticate(),
+    MaintenanceController.getAcceptanceReportById
+);
+
 router.put(
     "/acceptance-reports/:id/approve",
     authenticate(),
     authorize(ROLES.MANAGER),
     validateApproveAcceptanceReport,
     MaintenanceController.approveAcceptanceReport
-);
-
-router.get(
-    "/acceptance-reports/:id",
-    authenticate(),
-    MaintenanceController.getAcceptanceReportById
 );
 
 export default router;
