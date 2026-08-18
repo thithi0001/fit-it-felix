@@ -187,7 +187,7 @@ export const MaintenanceRepository = {
         const repairs = await prisma.repairs.findMany({
             where: {
                 plans: {
-                    plan_id
+                    some: { plan_id }
                 }
             },
             orderBy: { created_at: 'desc' }
