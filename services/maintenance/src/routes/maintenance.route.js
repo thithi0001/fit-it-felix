@@ -88,7 +88,6 @@ router.get(
 //     "/plans/:id/cancel",
 //     authenticate(),
 //     authorize(ROLES.MANAGER),
-//     //
 //     MaintenanceController.cancelPlan
 // );
 

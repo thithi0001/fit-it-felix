@@ -76,6 +76,7 @@ services:
       DEVICE_SERVICE_URL: ${DEVICE_SERVICE_URL:-http://device:3003}
       INVENTORY_SERVICE_URL: ${INVENTORY_SERVICE_URL:-http://inventory:3004}
       MAINTENANCE_SERVICE_URL: ${MAINTENANCE_SERVICE_URL:-http://maintenance:3005}
+      AI_SERVICE_URL: ${AI_SERVICE_URL:-http://ai:3006}
       AUDIT_SERVICE_URL: ${AUDIT_SERVICE_URL:-http://audit:3007}
       NOTIFICATION_SERVICE_URL: ${NOTIFICATION_SERVICE_URL:-http://notification:3009}
       JWT_SECRET: ${JWT_SECRET:-tttn_c18_2026}
@@ -197,6 +198,36 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV:-development}
       MAINTENANCE_PORT: ${MAINTENANCE_PORT:-3005}
+      RABBITMQ_URL: ${RABBITMQ_URL:-amqp://guest:guest@rabbitmq:5672}
+      JWT_SECRET: ${JWT_SECRET:-tttn_c18_2026}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-tttn_c18_2026_refresh}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+
+  ai:
+    build:
+      context: .
+      dockerfile: services/ai/Dockerfile
+    container_name: ai
+    restart: unless-stopped
+    ports:
+      - "3006:3006"
+    volumes:
+      - ./.env:/usr/src/app/.env:ro
+      - ./services/ai/.env:/usr/src/app/services/ai/.env:ro
+      - ./shared:/usr/src/app/shared
+      - ./services/ai:/usr/src/app/services/ai
+      - /usr/src/app/shared/node_modules
+      - /usr/src/app/services/ai/node_modules
+      - /usr/src/app/services/ai/prisma/.prisma
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./.env
+      - ./services/ai/.env
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      AI_PORT: ${AI_PORT:-3006}
       RABBITMQ_URL: ${RABBITMQ_URL:-amqp://guest:guest@rabbitmq:5672}
       JWT_SECRET: ${JWT_SECRET:-tttn_c18_2026}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-tttn_c18_2026_refresh}
