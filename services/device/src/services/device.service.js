@@ -136,7 +136,7 @@ export const DeviceService = {
     return buildAssignRequestDetailPayload(assignRequestDetail);
   },
 
-  listAssignRequest: async () => {
+  listAssignRequests: async () => {
     const assignRequests = await DeviceRepository.listAssignRequest();
     return assignRequests.map(buildAssignRequestPayload);
   },
