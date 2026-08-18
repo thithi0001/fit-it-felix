@@ -85,7 +85,7 @@ export const MaintenanceRepository = {
             description,
             planned_start_at,
             planned_end_at,
-            employeesList
+            employeesList = []
         } = data;
 
         // employeesList = [{availability_status, employee_id}, ...]
