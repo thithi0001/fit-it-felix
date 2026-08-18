@@ -86,7 +86,6 @@ const buildDamageReportPayload = (damageReport) => {
     id: String(damageReport.id),
     plan_id: String(damageReport.plan_id),
     created_by_employee_id: String(damageReport.created_by_employee_id),
-    device_id: String(damageReport.device_id),
     description: damageReport.description ?? "",
     solution: damageReport.solution ?? "",
     repair_action: damageReport.repair_action,
