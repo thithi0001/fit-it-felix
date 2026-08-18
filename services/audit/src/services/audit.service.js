@@ -3,7 +3,17 @@ import { AuditRepository } from '../repositories/audit.repository.js';
 const buildAuditPayload = (audit) => {
     return {
         id: String(audit?.id ?? ""),
-        // i will implement this function later
+        actor_employee_id: audit?.actor_employee_id ? String(audit.actor_employee_id) : null,
+        actor_name: audit?.actor_name ?? null,
+        action: audit?.action ?? null,
+        service_name: audit?.service_name ?? null,
+        table_name: audit?.table_name ?? null,
+        record_id: audit?.record_id ? String(audit.record_id) : null,
+        old_value: audit?.old_value ?? null,
+        new_value: audit?.new_value ?? null,
+        ip_address: audit?.ip_address ?? null,
+        user_agent: audit?.user_agent ?? null,
+        created_at: audit?.created_at ?? null,
     }
 };
 

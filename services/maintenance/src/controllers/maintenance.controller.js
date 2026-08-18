@@ -7,7 +7,10 @@ export const MaintenanceController = {
     // Plan methods
     createPlan: async (req, res, next) => {
         try {
-            const data = req.body;
+            const data = {
+                ...req.body,
+                created_by: req.user?.employee_id ?? req.body.created_by,
+            };
             const plan = await MaintenanceService.createPlan(data);
             return res.json(successResponse({ data: plan, message: "Maintenance plan created" }));
         } catch (error) {

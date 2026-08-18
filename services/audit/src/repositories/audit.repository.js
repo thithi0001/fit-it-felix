@@ -8,6 +8,8 @@ export const AuditRepository = {
             actor_id,
             action,
             service_name,
+            table_name,
+            record_id,
             old_value,
             new_value,
             ip_address,
@@ -19,6 +21,8 @@ export const AuditRepository = {
                 actor_employee_id: toBigInt(actor_id),
                 action,
                 service_name,
+                table_name,
+                record_id: record_id ? toBigInt(record_id) : null,
                 old_value,
                 new_value,
                 ip_address,
@@ -54,7 +58,7 @@ export const AuditRepository = {
     getByEmployeeId: async (employeeId) => {
         return prisma.audit_logs.findMany({
             orderBy: { created_at: 'desc' },
-            where: { employee_id: toBigInt(employeeId) }
+            where: { actor_employee_id: toBigInt(employeeId) }
         });
     },
 

@@ -1,6 +1,7 @@
 import app from "./app.js";
 import { env } from "./config/env.js";
 import { connectRabbitMQ } from "../../../shared/rabbitmq/index.js";
+import { startMaintenanceAuditConsumer } from "./consumers/maintenance.consumer.js";
 
 const start = async () => {
     let connected = false;
@@ -20,6 +21,7 @@ const start = async () => {
         throw new Error("RabbitMQ is not available after multiple attempts");
     }
 
+    await startMaintenanceAuditConsumer();
     app.listen(env.PORT, () => console.log(`Audit service listening ${env.PORT}`));
 };
 
