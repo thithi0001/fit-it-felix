@@ -9,6 +9,46 @@ const router = Router();
 
 router.get("/health", HealthController.health);
 
+router.post(
+    "/conversations",
+    authenticate(),
+    authorize(ROLES.TECHNICIAN),
+    ConversationController.create
+);
 
+router.get(
+    "/conversations",
+    authenticate(),
+    authorize(ROLES.TECHNICIAN),
+    ConversationController.getConversations
+);
+
+router.get(
+    "/conversations/:id",
+    authenticate(),
+    authorize(ROLES.TECHNICIAN),
+    ConversationController.getConversationById
+);
+
+router.delete(
+    "/conversations/:id",
+    authenticate(),
+    authorize(ROLES.TECHNICIAN),
+    ConversationController.deleteConversationById
+);
+
+router.post(
+    "/conversations/:conversationId/messages",
+    authenticate(),
+    authorize(ROLES.TECHNICIAN),
+    MessageController.sendMessage
+);
+
+router.get(
+    "/conversations/:conversationId/messages",
+    authenticate(),
+    authorize(ROLES.TECHNICIAN),
+    MessageController.getMessages
+);
 
 export default router;
