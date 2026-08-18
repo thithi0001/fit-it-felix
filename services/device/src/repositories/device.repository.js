@@ -317,7 +317,7 @@ export const DeviceRepository = {
             const device_request_detail = await tx.device_request_details.update({
                 where: { id: toBigInt(id) },
                 data: {
-                    approved_at: Date.now(),
+                    approved_at: new Date(),
                     approved_by_employee_id: toBigInt(approved_by),
                     status
                 },

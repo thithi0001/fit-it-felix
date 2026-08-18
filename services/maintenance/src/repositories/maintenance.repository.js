@@ -122,7 +122,7 @@ export const MaintenanceRepository = {
             where: { id: toBigInt(id) },
             data: {
                 status: "ongoing",
-                actual_start_at: Date.now()
+                actual_start_at: new Date()
             },
         });
     },
@@ -131,7 +131,7 @@ export const MaintenanceRepository = {
         return prisma.plans.update({
             where: { id: toBigInt(id) },
             data: {
-                status: "cancel"
+                status: "cancelled"
             }
         });
     },
@@ -141,7 +141,7 @@ export const MaintenanceRepository = {
             where: { id: toBigInt(id) },
             data: {
                 status: "completed",
-                planned_end_at: Date.now()
+                actual_end_at: new Date()
             }
         });
     },
