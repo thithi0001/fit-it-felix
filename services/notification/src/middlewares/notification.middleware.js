@@ -14,9 +14,9 @@ export const requireNotificationOwnerShip = async (req, res, next) => {
             throw forbidden("User employee id is missing");
         }
 
-        // if ([ROLES.ADMIN, ROLES.MANAGER].includes(currentRole)) {
-        //     return next();
-        // }
+        if ([ROLES.ADMIN, ROLES.MANAGER].includes(currentRole)) {
+            return next();
+        }
 
         const targetEmployeeId = req.params.employeeId
             ? String(req.params.employeeId)
