@@ -72,6 +72,15 @@ export const DeviceController = {
             next(error);
         }
     },
+
+    getMaintenanceContext: async (req, res, next) => {
+        try {
+            const context = await DeviceService.getMaintenanceContext(req.params.id);
+            return res.json(successResponse({ data: context, message: "Device maintenance context found" }));
+        } catch (error) {
+            next(error);
+        }
+    },
     
     listDevicesByEmployeeId: async (req, res, next) => {
         try {

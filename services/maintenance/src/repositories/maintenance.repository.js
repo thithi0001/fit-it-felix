@@ -62,6 +62,7 @@ export const MaintenanceRepository = {
                 device_id: toBigInt(device_id),
                 plan_type,
                 description,
+                estimated_cost: estimated_cost !== undefined ? Number(estimated_cost) : undefined,
                 planned_start_at: parseDateInput(planned_start_at),
                 planned_end_at: parseDateInput(planned_end_at),
 

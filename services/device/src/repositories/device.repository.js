@@ -118,6 +118,21 @@ export const DeviceRepository = {
         });
     },
 
+    getMaintenanceContext: async (id) => {
+        return prisma.devices.findUnique({
+            where: { id: toBigInt(id) },
+            select: {
+                id: true,
+                device_code: true,
+                device_name: true,
+                employee_devices: {
+                    where: { returned_at: null },
+                    select: { employee_id: true },
+                },
+            },
+        });
+    },
+
     getDevicesByEmployeeId: async (employeeId) => {
         return prisma.devices.findMany({
             where: {

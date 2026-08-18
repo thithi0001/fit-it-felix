@@ -103,6 +103,24 @@ export const DeviceService = {
     return buildDevicePayload(device);
   },
 
+  getMaintenanceContext: async (id) => {
+    const device = await DeviceRepository.getMaintenanceContext(id);
+    if (!device) {
+      throw notFound("Device not found");
+    }
+
+    return {
+      device: {
+        id: String(device.id),
+        code: device.device_code,
+        name: device.device_name,
+      },
+      device_manager_employee_ids: device.employee_devices.map(
+        (assignment) => String(assignment.employee_id)
+      ),
+    };
+  },
+
   listDevicesByEmployeeId: async (employeeId) => {
     const devices = await DeviceRepository.getDevicesByEmployeeId(employeeId);
     return devices.map(buildDevicePayload);

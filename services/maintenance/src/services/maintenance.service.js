@@ -1,5 +1,7 @@
 import { badRequest, notFound } from '../../../../shared/utils/errors.js';
 import { MaintenanceRepository } from '../repositories/maintenance.repository.js';
+import { DeviceClient } from '../clients/device.client.js';
+import { publishPlanCreated } from '../publishers/maintenance.publisher.js';
 
 const buildPlanPayload = (plan) => {
   const plan_assignments = plan?.plan_assignments ?? [];
@@ -94,10 +96,28 @@ const buildDamageReportPayload = (damageReport) => {
 };export const MaintenanceService = {
   // Plan methods
   createPlan: async (data) => {
+    const deviceContext = await DeviceClient.getMaintenanceContext(data.device_id);
+    const managerEmployeeIds = deviceContext.device_manager_employee_ids ?? [];
+    const recipientEmployeeIds = [...new Set([
+      ...data.employee_ids.map((id) => String(id)),
+      ...managerEmployeeIds.map((id) => String(id)),
+    ])];
+
     const plan = await MaintenanceRepository.createPlan(data);
     if (!plan) {
       throw badRequest("Cannot create maintenance plan");
     }
+
+    await publishPlanCreated({
+      plan,
+      device: {
+        code: deviceContext.device.code,
+        name: deviceContext.device.name,
+        manager_employee_ids: managerEmployeeIds.map((id) => String(id)),
+      },
+      recipientEmployeeIds,
+    });
+
     return buildPlanPayload(plan);
   },
 

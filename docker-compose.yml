@@ -138,6 +138,7 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV:-development}
       DEVICE_PORT: ${DEVICE_PORT:-3003}
+      INTERNAL_SERVICE_KEY: ${INTERNAL_SERVICE_KEY:-internal-dev-key}
       RABBITMQ_URL: ${RABBITMQ_URL:-amqp://guest:guest@rabbitmq:5672}
       JWT_SECRET: ${JWT_SECRET:-tttn_c18_2026}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-tttn_c18_2026_refresh}
@@ -198,6 +199,8 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV:-development}
       MAINTENANCE_PORT: ${MAINTENANCE_PORT:-3005}
+      DEVICE_SERVICE_URL: ${DEVICE_SERVICE_URL:-http://device:3003}
+      INTERNAL_SERVICE_KEY: ${INTERNAL_SERVICE_KEY:-internal-dev-key}
       RABBITMQ_URL: ${RABBITMQ_URL:-amqp://guest:guest@rabbitmq:5672}
       JWT_SECRET: ${JWT_SECRET:-tttn_c18_2026}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-tttn_c18_2026_refresh}
@@ -232,7 +235,6 @@ services:
       JWT_SECRET: ${JWT_SECRET:-tttn_c18_2026}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-tttn_c18_2026_refresh}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
-
   audit:
     build:
       context: .

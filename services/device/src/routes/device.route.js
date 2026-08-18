@@ -11,8 +11,15 @@ import {
   validateUpdateDevice,
 } from "../middlewares/device.middleware.js";
 import { ROLES } from "../../../../shared/constants/roles.js";
+import { authenticateService } from "../../../../shared/middlewares/service.middleware.js";
 
 const router = Router();
+
+router.get(
+  "/internal/:id/maintenance-context",
+  authenticateService,
+  DeviceController.getMaintenanceContext,
+);
 
 router.get("/health", DeviceController.health);
 

@@ -23,6 +23,8 @@ const loadedEnv = {
   REPORT_PORT: Number(process.env.REPORT_PORT ?? 3008),
   NOTIFICATION_PORT: Number(process.env.NOTIFICATION_PORT ?? 3009),
   RABBITMQ_URL: process.env.RABBITMQ_URL ?? "amqp://guest:guest@rabbitmq:5672",
+  DEVICE_SERVICE_URL: process.env.DEVICE_SERVICE_URL ?? "http://localhost:3003",
+  INTERNAL_SERVICE_KEY: process.env.INTERNAL_SERVICE_KEY ?? "internal-dev-key",
   JWT_SECRET: process.env.JWT_SECRET ?? "jwt_secret_not_set",
   JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET ?? "jwt_refresh_secret_not_set",
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN ?? "1d",
