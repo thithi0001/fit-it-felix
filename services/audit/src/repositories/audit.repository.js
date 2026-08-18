@@ -4,25 +4,42 @@ import { toBigInt } from "../../../../shared/utils/response.js";
 
 export const AuditRepository = {
     createAudit: async (auditData) => {
-        // i will implement this function later
+        const {
+            actor_id,
+            action,
+            service_name,
+            old_value,
+            new_value,
+            ip_address,
+            user_agent
+        } = auditData;
+
+        return prisma.audit_logs.create({
+            data: {
+                actor_employee_id: toBigInt(actor_id),
+                action,
+                service_name,
+                old_value,
+                new_value,
+                ip_address,
+                user_agent
+            }
+        });
     },
 
     getById: async (id) => {
-        // i will implement this function later
         return prisma.audit_logs.findUnique({
             where: { id: toBigInt(id) },
         });
     },
 
     list: async () => {
-        // i will implement this function later
         return prisma.audit_logs.findMany({
             orderBy: { created_at: 'desc' },
         });
     },
 
     getByDateRange: async (startDate, endDate) => {
-        // i will implement this function later
         return prisma.audit_logs.findMany({
             orderBy: { created_at: 'desc' },
             where: {
@@ -35,7 +52,6 @@ export const AuditRepository = {
     },
 
     getByEmployeeId: async (employeeId) => {
-        // i will implement this function later
         return prisma.audit_logs.findMany({
             orderBy: { created_at: 'desc' },
             where: { employee_id: toBigInt(employeeId) }
@@ -43,7 +59,6 @@ export const AuditRepository = {
     },
 
     getByAction: async (action) => {
-        // i will implement this function later
         return prisma.audit_logs.findMany({
             orderBy: { created_at: 'desc' },
             where: { action }
@@ -51,7 +66,6 @@ export const AuditRepository = {
     },
 
     getByService: async (service) => {
-        // i will implement this function later
         return prisma.audit_logs.findMany({
             orderBy: { created_at: 'desc' },
             where: { service_name: service }
