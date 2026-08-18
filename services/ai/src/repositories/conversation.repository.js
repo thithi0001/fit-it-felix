@@ -18,10 +18,10 @@ export const ConversationRepository = {
     },
 
     findById: async (id, employee_id) => {
-        return prisma.conversations.findUnique({
-            where: { 
+        return prisma.conversations.findFirst({
+            where: {
                 id: toBigInt(id),
-                // employee_id: toBigInt(employee_id)
+                employee_id: toBigInt(employee_id)
             }
         });
     },

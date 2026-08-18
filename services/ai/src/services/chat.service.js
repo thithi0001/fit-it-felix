@@ -1,20 +1,22 @@
 import { ConversationRepository } from "../repositories/conversation.repository.js";
 import { MessageRepository } from "../repositories/message.repository.js";
 import { generateResponse } from "./gemini.service.js";
+import { toBigInt } from "../../../../shared/utils/response.js";
 
 export const sendMessage = async (conversationId, employeeId, content) => {
+    const normalizedEmployeeId = toBigInt(employeeId);
     const conversation =
         await ConversationRepository.findById(conversationId, employeeId);
 
     if (!conversation) {
         const error = new Error("Conversation not found");
-        error.statusCode = 404;
+        error.status = 404;
         throw error;
     }
 
-    if (conversation.employee_id !== employeeId) {
+    if (conversation.employee_id !== normalizedEmployeeId) {
         const error = new Error("You do not have access to this conversation");
-        error.statusCode = 403;
+        error.status = 403;
         throw error;
     }
 
@@ -64,18 +66,19 @@ export const sendMessage = async (conversationId, employeeId, content) => {
 };
 
 export const getMessages = async (conversationId, employeeId) => {
+    const normalizedEmployeeId = toBigInt(employeeId);
     const conversation =
         await ConversationRepository.findById(conversationId, employeeId);
 
     if (!conversation) {
         const error = new Error("Conversation not found");
-        error.statusCode = 404;
+        error.status = 404;
         throw error;
     }
 
-    if (conversation.employee_id !== employeeId) {
+    if (conversation.employee_id !== normalizedEmployeeId) {
         const error = new Error("You do not have access to this conversation");
-        error.statusCode = 403;
+        error.status = 403;
         throw error;
     }
 
