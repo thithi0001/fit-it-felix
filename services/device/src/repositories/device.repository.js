@@ -227,7 +227,7 @@ export const DeviceRepository = {
             where: { id: toBigInt(id) },
             include: {
                 assign_request_details: {
-                    categories: true
+                    include: { categories: true }
                 }
             }
         });
