@@ -94,7 +94,7 @@ export const DeviceService = {
     return buildDevicePayload(device);
   },
 
-  getDeviceById: async () => {
+  getDeviceById: async (id) => {
     const device = await DeviceRepository.getDeviceById(id);
     if (!device) {
       throw notFound("Device not found");
