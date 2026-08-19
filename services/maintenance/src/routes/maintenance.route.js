@@ -95,7 +95,7 @@ router.get(
 router.post(
     "/repairs",
     authenticate(),
-    authorize(ROLES.ADMIN, ROLES.MANAGER),
+    authorize(ROLES.USER),
     validateCreateRepair,
     MaintenanceController.createRepairRequest
 );
