@@ -103,7 +103,6 @@ router.post(
 router.get(
     "/repairs",
     authenticate(),
-    authorize(ROLES.MANAGER),
     MaintenanceController.listRepairRequests
 );
 
@@ -133,7 +132,6 @@ router.post(
 router.get(
     "/adjust-plans",
     authenticate(),
-    authorize(ROLES.MANAGER),
     MaintenanceController.listAdjustPlanRequests
 );
 
@@ -201,7 +199,6 @@ router.post(
 router.get(
     "/acceptance-reports",
     authenticate(),
-    authorize(ROLES.MANAGER),
     MaintenanceController.listAcceptanceReports
 );
 
