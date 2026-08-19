@@ -187,6 +187,12 @@ router.put(
     MaintenanceController.approveMaintenanceRequest
 );
 
+router.get(
+    "/maintenance-requests",
+    authenticate(),
+    MaintenanceController.listMaintenanceRequests
+);
+
 // Acceptance Report routes
 router.post(
     "/acceptance-reports",

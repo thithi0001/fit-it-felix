@@ -279,4 +279,13 @@ export const MaintenanceController = {
             next(error);
         }
     },
+
+    listMaintenanceRequests: async (req, res, next) => {
+        try {
+            const maintenances = await MaintenanceService.listMaintenanceRequests();
+            return res.json(successResponse({ data: maintenances, message: "Maintenance requests list" }));
+        } catch (error) {
+            next(error);
+        }
+    }
 }

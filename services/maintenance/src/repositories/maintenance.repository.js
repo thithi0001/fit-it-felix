@@ -387,6 +387,12 @@ export const MaintenanceRepository = {
         return prisma.acceptance_reports.findMany({
             orderBy: { created_at: 'desc' }
         });
+    },
+
+    listMaintenanceRequests: async () => {
+        return prisma.maintenance_requests.findMany({
+            orderBy: { created_at: 'desc' }
+        });
     }
     
 };

@@ -317,5 +317,10 @@ const buildDamageReportPayload = (damageReport) => {
   listAdjustPlanRequests: async () => {
     const adjusts = await MaintenanceRepository.listAdjustPlanRequests();
     return adjusts.map(buildAdjustPlanRequestPayload);
+  },
+
+  listMaintenanceRequests: async () => {
+    const maintenances = await MaintenanceRepository.listMaintenanceRequests();
+    return maintenances.map(buildMaintenanceRequestPayload);
   }
 };
