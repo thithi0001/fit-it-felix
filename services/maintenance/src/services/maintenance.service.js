@@ -303,4 +303,19 @@ const buildDamageReportPayload = (damageReport) => {
     }
     return buildAcceptanceReportPayload(acceptance);
   },
+
+  listRepairRequests: async () => {
+    const repairs = await MaintenanceRepository.listRepairRequests();
+    return repairs.map(buildRepairRequestPayload);
+  },
+
+  listAcceptanceReports: async () => {
+    const acceptances = await MaintenanceRepository.listAcceptanceReports();
+    return acceptances.map(buildAcceptanceReportPayload);
+  },
+
+  listAdjustPlanRequests: async () => {
+    const adjusts = await MaintenanceRepository.listAdjustPlanRequests();
+    return adjusts.map(buildAdjustPlanRequestPayload);
+  }
 };

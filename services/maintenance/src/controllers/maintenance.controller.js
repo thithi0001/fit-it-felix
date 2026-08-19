@@ -252,4 +252,31 @@ export const MaintenanceController = {
             next(error);
         }
     },
+
+    listRepairRequests: async (req, res, next) => {
+        try {
+            const repairs = await MaintenanceService.listRepairRequests();
+            return res.json(successResponse({ data: repairs, message: "Repair requests list" }));
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    listAcceptanceReports: async (req, res, next) => {
+        try {
+            const reports = await MaintenanceService.listAcceptanceReports();
+            return res.json(successResponse({ data: reports, message: "Acceptance reports list" }));
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    listAdjustPlanRequests: async (req, res, next) => {
+        try {
+            const adjusts = await MaintenanceService.listAdjustPlanRequests();
+            return res.json(successResponse({ data: adjusts, message: "Adjust plan requests list" }));
+        } catch (error) {
+            next(error);
+        }
+    },
 }

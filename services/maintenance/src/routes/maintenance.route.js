@@ -101,6 +101,13 @@ router.post(
 );
 
 router.get(
+    "/repairs",
+    authenticate(),
+    authorize(ROLES.MANAGER),
+    MaintenanceController.listRepairRequests
+);
+
+router.get(
     "/repairs/:id",
     authenticate(),
     MaintenanceController.getRepairRequestById
@@ -121,6 +128,13 @@ router.post(
     authorize(ROLES.TECHNICIAN),
     validateCreateAdjustPlan,
     MaintenanceController.createAdjustPlanRequest
+);
+
+router.get(
+    "/adjust-plans",
+    authenticate(),
+    authorize(ROLES.MANAGER),
+    MaintenanceController.listAdjustPlanRequests
 );
 
 router.get(
@@ -182,6 +196,13 @@ router.post(
     authorize(ROLES.TECHNICIAN),
     validateCreateAcceptanceReport,
     MaintenanceController.createAcceptanceReport
+);
+
+router.get(
+    "/acceptance-reports",
+    authenticate(),
+    authorize(ROLES.MANAGER),
+    MaintenanceController.listAcceptanceReports
 );
 
 router.get(

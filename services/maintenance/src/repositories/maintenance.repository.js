@@ -42,6 +42,12 @@ export const MaintenanceRepository = {
             where: { id: toBigInt(id) }
         });
     },
+
+    listRepairRequests: async () => {
+        return prisma.repairs.findMany({
+            orderBy: { created_at: 'desc' }
+        });
+    },
     
     
     createPlan: async (data) => {
@@ -261,6 +267,12 @@ export const MaintenanceRepository = {
             where: { id: toBigInt(id) }
         });
     },
+
+    listAdjustPlanRequest: async () => {
+        return prisma.adjust_plans.findMany({
+            orderBy: { created_at: 'desc' }
+        });
+    },
     
     
     createDamageReport: async (data) => {
@@ -370,5 +382,11 @@ export const MaintenanceRepository = {
             where: { id: toBigInt(id) }
         });
     },
+
+    listAcceptanceReports: async () => {
+        return prisma.acceptance_reports.findMany({
+            orderBy: { created_at: 'desc' }
+        });
+    }
     
 };
